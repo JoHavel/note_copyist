@@ -5,6 +5,10 @@ from datasets import mnist
 from generators.basicGAN import GAN
 from validation.visualizers import gs_img_nd_ls_visualizer
 
+LATENT_SHAPE = [100]
+BATCH_SIZE = 50
+EPOCHS = 50
+
 network = GAN(generator.generator(LATENT_SHAPE, mnist.shape), discriminator.discriminator(mnist.shape), SEED)
 
 

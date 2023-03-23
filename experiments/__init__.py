@@ -1,10 +1,6 @@
 SEED = 42
 THREADS = 3
 
-LATENT_SHAPE = [100]
-BATCH_SIZE = 50
-EPOCHS = 50
-
 import tensorflow as tf
 import os
 

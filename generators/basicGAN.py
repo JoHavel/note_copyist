@@ -32,7 +32,7 @@ class GAN(tf.keras.Model):
 
         super().compile()
 
-    def train_step(self, items: tf.Tensor):
+    def train_step(self, items: tf.Tensor) -> dict[str, tf.Tensor]:
         # Generator
         with tf.GradientTape() as tape:
             samples = self._latent_prior.sample(tf.shape(items)[0], seed=self._seed)
