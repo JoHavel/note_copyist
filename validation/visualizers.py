@@ -11,7 +11,10 @@ def _concat_and_save(images, filename: str = "img.png"):
     ans = np.concatenate(columns, axis=1)
 
     plt.imshow(ans, interpolation='nearest')
-    plt.savefig(filename)
+    if filename is not None:
+        plt.savefig(filename)
+    else:
+        plt.show()
 
 
 def gs_img_2d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, filename: str = "img.png") -> ():
