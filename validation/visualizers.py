@@ -51,6 +51,6 @@ def gs_img_nd_ls_visualizer(
     for i in range(n_of_images):
         images.append([])
         for j in range(n_of_images):
-            images[-1].append(network.generator(np.random.standard_normal(*shape)[None])[0])
+            images[-1].append(network(np.random.standard_normal(*shape)[None])[0])
 
     _concat_and_save(images, filename)
