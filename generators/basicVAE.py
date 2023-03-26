@@ -40,7 +40,7 @@ class VAE(tf.keras.Model):
 
             # Loss from "difference" from prior
             latent_loss = tf.reduce_mean(
-                distribution.kl_divergence(tfp.distributions.Normal(tf.zeros_like(mean), tf.ones_like(sd)))
+                distribution.kl_divergence(self._latent_prior)
             )
 
             # Sum losses

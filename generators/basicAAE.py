@@ -44,7 +44,6 @@ class AAE(tf.keras.Model):
             reconstruction_loss = self.decoder.compiled_loss(images, generated_images)
 
             # Loss from discriminator (latent space loss)
-            prior = tfp.distributions.Normal(tf.zeros_like(mean), tf.ones_like(sd))
             dis = self.discriminator(latent_space, training=True)
             adversarial_loss = self.discriminator.compiled_loss(tf.ones_like(dis), dis)
 
@@ -62,7 +61,7 @@ class AAE(tf.keras.Model):
 
         # Discriminator
         with tf.GradientTape() as tape:
-            discriminated_real = self.discriminator(prior.sample(), training=True)  # FIXME seed=self._seed?
+            discriminated_real = self.discriminator(self._latent_prior.sample(), training=True)  # FIXME seed=self._seed?
             discriminated_fake = self.discriminator(latent_space, training=True)
             discriminator_loss = (
                     self.discriminator.compiled_loss(tf.ones_like(discriminated_real), discriminated_real) +
