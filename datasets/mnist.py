@@ -2,6 +2,8 @@ from keras.datasets import mnist
 
 shape = (28, 28, 1)
 
+N_OF_CATEGORIES = 10
+
 train_len = 60000
 val_len = 10000
 test_len = 10000

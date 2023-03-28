@@ -57,3 +57,31 @@ def gs_img_nd_ls_visualizer(
             images[-1].append(network(np.random.standard_normal(*shape)[None])[0])
 
     _concat_and_save(images, filename)
+
+
+def cat_gs_img_nd_ls_visualizer(
+        network: tf.keras.Model,
+        n_of_categories: int,
+        shape: tuple[int, ...],
+        n_of_images: int = 10,
+        filename: str = "img",
+        extension: str = ".png",
+):
+    """
+        Visualise grid of grayscale images generated randomly from multidimensional latent space.
+
+        With one_hot categories in first dimensions (FIXME other than shapes [n])
+    """
+    for c in range(n_of_categories):
+        images = []
+        category = np.zeros(n_of_categories)
+        category[c] = 1
+        for i in range(n_of_images):
+            images.append([])
+            for j in range(n_of_images):
+                images[-1].append(network(np.concatenate([
+                    category,
+                    np.random.standard_normal(shape[0] - n_of_categories)
+                ])[None])[0])
+
+        _concat_and_save(images, filename + "c" + str(c) + extension)

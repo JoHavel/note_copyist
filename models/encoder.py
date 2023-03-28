@@ -37,6 +37,8 @@ def encoder_to_normal(
     sd = tf.keras.layers.Dense(output_shape[0], activation="exponential")(last_layer)
     model = tf.keras.Model(inputs=inp, outputs={"mean": mean, "sd": sd}, name="Encoder")
 
-    model.compile()
+    model.compile(
+        loss=tf.losses.MSE,
+    )
 
     return model
