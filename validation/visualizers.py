@@ -30,7 +30,7 @@ def gs_img_2d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, file
     _concat_and_save(images, filename)
 
 
-def gs_img_3d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, filename: str = "img.png"):
+def gs_img_3d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, filename: str = "img", extension: str = ".png"):
     """
         Visualise grid of grayscale images generated from 3D latent space.
     """
@@ -41,7 +41,7 @@ def gs_img_3d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, file
             for j in range(n_of_images):
                 images[-1].append(network(np.array([i/n_of_images, j/n_of_images, k/n_of_images])[None])[0])
 
-        _concat_and_save(images, str(k) + filename)
+        _concat_and_save(images, filename + "d" + str(k) + extension)
 
 
 def gs_img_nd_ls_visualizer(
