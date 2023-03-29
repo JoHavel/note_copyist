@@ -3,7 +3,7 @@ from experiments.__init__ import *
 from models import encoder, generator, discriminator
 from datasets import mnist
 from generators.categoricalAAE import AAE
-from validation.visualizers import cat_gs_img_nd_ls_visualizer
+from validation.visualizers import cat_gs_img_2d_ls_visualizer
 
 LATENT_SHAPE = [2]
 BATCH_SIZE = 50
@@ -20,11 +20,9 @@ network.compile(optimizer=tf.optimizers.Adam())
 
 
 def draw(i, _):
-    cat_gs_img_nd_ls_visualizer(
+    cat_gs_img_2d_ls_visualizer(
         network,
         mnist.N_OF_CATEGORIES,
-        (network.latent_shape[0] + mnist.N_OF_CATEGORIES,),
-        # filename=None,
         filename=f"out/caae{i}",
     )
 
