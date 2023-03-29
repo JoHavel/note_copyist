@@ -84,4 +84,4 @@ def cat_gs_img_nd_ls_visualizer(
                     np.random.standard_normal(shape[0] - n_of_categories)
                 ])[None])[0])
 
-        _concat_and_save(images, filename + "c" + str(c) + extension)
+        _concat_and_save(images, (filename + "c" + str(c) + extension) if filename is not None else None)
