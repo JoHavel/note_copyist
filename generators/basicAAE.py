@@ -61,7 +61,7 @@ class AAE(tf.keras.Model):
 
         # Discriminator
         with tf.GradientTape() as tape:
-            discriminated_real = self.discriminator(self._latent_prior.sample(), training=True)  # FIXME seed=self._seed?
+            discriminated_real = self.discriminator(tf.stack([self._latent_prior.sample() for _ in range(images.shape[0])]), training=True)  # FIXME seed=self._seed?
             discriminated_fake = self.discriminator(latent_space, training=True)
             discriminator_loss = (
                     self.discriminator.compiled_loss(tf.ones_like(discriminated_real), discriminated_real) +
