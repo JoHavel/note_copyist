@@ -10,7 +10,7 @@ def _concat_and_save(images, filename: str = "img.png"):
 
     ans = np.concatenate(columns, axis=1)
 
-    plt.imshow(ans, interpolation='nearest')
+    plt.imshow(ans, interpolation='nearest', cmap="gray")
     if filename is not None:
         plt.savefig(filename)
     else:
