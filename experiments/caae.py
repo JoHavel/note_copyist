@@ -3,7 +3,7 @@ from experiments.__init__ import *
 from models import encoder, generator, discriminator
 from datasets import mnist
 from generators.categoricalAAE import AAE
-from validation.visualizers import cat_gs_img_2d_ls_visualizer
+from utils.visualizers import cat_gs_img_2d_ls_visualizer
 
 LATENT_SHAPE = [2]
 BATCH_SIZE = 50

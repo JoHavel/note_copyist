@@ -3,7 +3,7 @@ from experiments.__init__ import *
 from models import encoder, generator
 from datasets import mnist
 from generators.basicVAE import VAE
-from validation.visualizers import gs_img_nd_ls_visualizer
+from utils.visualizers import gs_img_nd_ls_visualizer
 
 LATENT_SHAPE = [5]
 BATCH_SIZE = 50

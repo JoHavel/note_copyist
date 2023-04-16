@@ -3,7 +3,7 @@ from experiments.__init__ import *
 from models import cat_discriminator, generator
 from datasets import mnist
 from generators.categoricalGAN import GAN
-from validation.visualizers import cat_gs_img_nd_ls_visualizer
+from utils.visualizers import cat_gs_img_nd_ls_visualizer
 
 LATENT_SHAPE = [15]
 BATCH_SIZE = 50
