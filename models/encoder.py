@@ -1,11 +1,8 @@
 import tensorflow as tf
 
 
-def _encoder_checks(input_shape: list[int], conv_layers: list[int]):
-    """
-        Throw exception if the arguments are in conflict.
-        TODO: Check if output_shape[:-1] matches output of conv. layers [:-1]
-    """
+def _body_checks(input_shape: list[int], conv_layers: list[int]):
+    """ Throw exception if the arguments are in conflict. """
     if len(conv_layers) != 0 and len(input_shape) < 2:
         raise ValueError("Conv for 1D or scalar data!")
 
@@ -45,7 +42,7 @@ def _body(
         stride: int
 ):  # -> (input, last_layer)
     """ Create the processing part of neural network (input, conv layers, hidden layers) """
-    _encoder_checks(input_shape, conv_layers)
+    _body_checks(input_shape, conv_layers)
 
     # INPUT
     inp = tf.keras.layers.Input(input_shape)
@@ -82,6 +79,7 @@ def encoder_to_normal(
     """
         Create neural network, that encode data to mean and standard deviation of multidimensional normal distribution.
     """
+    # TODO: Check if output_shape[:-1] matches output of conv. layers [:-1]
     inp, last_layer = _body(input_shape, output_shape, hidden_layers, conv_layers, kernel_size, stride)
     model = _normal_dist_head(inp, last_layer, output_shape, "Encoder_to_normal_dist")
     model.compile(loss=tf.losses.MSE)
