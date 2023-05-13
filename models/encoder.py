@@ -49,14 +49,12 @@ def _body(
     last_layer = inp
 
     # LAYERS
-    if len(conv_layers) > 0:
-        last_layer = _conv_downsample(last_layer, conv_layers, kernel_size, stride, len(input_shape) == 2)
+    last_layer = _conv_downsample(last_layer, conv_layers, kernel_size, stride, len(input_shape) == 2)
 
     if len(input_shape) > 1 and len(output_shape) == 1:
         last_layer = tf.keras.layers.Flatten()(last_layer)
 
-    if len(hidden_layers) > 0:
-        last_layer = _fully_connected(last_layer, hidden_layers)
+    last_layer = _fully_connected(last_layer, hidden_layers)
 
     return inp, last_layer
 

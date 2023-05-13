@@ -19,8 +19,7 @@ def _body(
     last_layer = inp
 
     # LAYERS
-    if len(conv_layers) > 0:
-        last_layer = _conv_downsample(last_layer, conv_layers, kernel_size, stride, len(input_shape[0]) == 2)
+    last_layer = _conv_downsample(last_layer, conv_layers, kernel_size, stride, len(input_shape[0]) == 2)
 
     if len(input_shape[0]) > 1:
         last_layer = tf.keras.layers.Flatten()(last_layer)
@@ -28,8 +27,7 @@ def _body(
     cat_inp = tf.keras.layers.Input([input_shape[1]])
     last_layer = tf.keras.layers.Concatenate()([last_layer, cat_inp])
 
-    if len(hidden_layers) > 0:
-        last_layer = _fully_connected(last_layer, hidden_layers)
+    last_layer = _fully_connected(last_layer, hidden_layers)
 
     return [inp, cat_inp], last_layer
 
