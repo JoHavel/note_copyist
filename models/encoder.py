@@ -77,7 +77,7 @@ def encoder_to_normal(
         stride: int = 2
 ) -> tf.keras.Model:
     """
-        Create neural network, that encode data to mean and standard deviation of multidimensional normal distribution.
+        Create neural network, that encodes data to mean and standard deviation of multidimensional normal distribution.
     """
     # TODO: Check if output_shape[:-1] matches output of conv. layers [:-1]
     inp, last_layer = _body(input_shape, output_shape, hidden_layers, conv_layers, kernel_size, stride)
