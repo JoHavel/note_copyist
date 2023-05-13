@@ -2,7 +2,10 @@ import tensorflow as tf
 
 
 def _encoder_checks(input_shape: list[int], conv_layers: list[int]):
-    """ Throw exception if the arguments are in conflict. """
+    """
+        Throw exception if the arguments are in conflict.
+        TODO: Check if output_shape[:-1] matches output of conv. layers [:-1]
+    """
     if len(conv_layers) != 0 and len(input_shape) < 2:
         raise ValueError("Conv for 1D or scalar data!")
 
@@ -63,8 +66,8 @@ def _body(
 
 def _normal_dist_head(inp, last_layer, output_shape: list[int], name: str) -> tf.keras.Model:
     """ Add the outputting part of encoder_to_normal to _body """
-    mean = tf.keras.layers.Dense(output_shape[0])(last_layer)
-    sd = tf.keras.layers.Dense(output_shape[0], activation="exponential")(last_layer)
+    mean = tf.keras.layers.Dense(output_shape[-1])(last_layer)
+    sd = tf.keras.layers.Dense(output_shape[-1], activation="exponential")(last_layer)
     return tf.keras.Model(inputs=inp, outputs={"mean": mean, "sd": sd}, name=name)
 
 
