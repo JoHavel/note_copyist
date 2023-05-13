@@ -10,7 +10,7 @@ BATCH_SIZE = 50
 EPOCHS = 50
 
 network = AAE(
-    encoder.encoder_to_normal(mnist.shape, LATENT_SHAPE, layers=[500, 500]),
+    encoder.encoder_to_normal(mnist.shape, LATENT_SHAPE, hidden_layers=[500, 500]),
     generator.generator(LATENT_SHAPE, mnist.shape, layers=[500, 500]),
     discriminator.discriminator(LATENT_SHAPE),
     SEED,
