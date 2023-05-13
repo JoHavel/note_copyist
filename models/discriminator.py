@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from encoder import _body
+from .encoder import _body
 
 
 def discriminator(
