@@ -19,7 +19,8 @@ network.compile(optimizer=tf.optimizers.Adam())
 
 
 def draw(i, _):
-    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/aae{i}.png")
+    network.save_all("out/models/aae/aae" + str(i))
+    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/aae/aae{i}.png")
 
 
 logs = network.fit(

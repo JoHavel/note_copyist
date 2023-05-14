@@ -72,3 +72,13 @@ class GAN(tf.keras.Model):
 
     def call(self, inputs, **kwargs):
         return self.generator(inputs, **kwargs)
+
+    def save_all(self, path):
+        self.generator.save(path + "g.h5")
+        self.discriminator.save(path + "d.h5")
+
+    @staticmethod
+    def load_all(path: str, latent_prior=None):  # -> GAN
+        generator = tf.keras.models.load_model(path + "g.h5")
+        discriminator = tf.keras.models.load_model(path + "d.h5")
+        return GAN(generator, discriminator, latent_prior=latent_prior)

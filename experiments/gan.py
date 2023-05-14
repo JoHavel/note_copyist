@@ -13,7 +13,8 @@ network = GAN(generator.generator(LATENT_SHAPE, mnist.shape), discriminator.disc
 
 
 def draw(i, _):
-    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/gan{i}.png")
+    network.save_all("out/models/gan/gan" + str(i))
+    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/gan/gan{i}.png")
 
 
 logs = network.fit(

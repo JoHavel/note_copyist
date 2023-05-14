@@ -61,3 +61,13 @@ class VAE(tf.keras.Model):
 
     def call(self, inputs, **kwargs):
         return self.decoder(inputs, **kwargs)
+
+    def save_all(self, path):
+        self.encoder.save(path + "e.h5")
+        self.decoder.save(path + "d.h5")
+
+    @staticmethod
+    def load_all(path: str, latent_prior=None):  # -> VAE
+        encoder = tf.keras.models.load_model(path + "e.h5")
+        decoder = tf.keras.models.load_model(path + "d.h5")
+        return VAE(encoder, decoder, latent_prior=latent_prior)

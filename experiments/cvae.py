@@ -19,7 +19,8 @@ network.compile(optimizer=tf.optimizers.Adam())
 
 
 def draw(i, _):
-    cat_gs_img_nd_ls_visualizer(network, mnist.N_OF_CATEGORIES, network.latent_shape, filename=f"out/cvae{i}")
+    network.save_all("out/models/cvae/cvae" + str(i))
+    cat_gs_img_nd_ls_visualizer(network, mnist.N_OF_CATEGORIES, network.latent_shape, filename=f"out/cvae/cvae{i}")
 
 
 logs = network.fit(

@@ -18,7 +18,8 @@ network.compile(optimizer=tf.optimizers.Adam())
 
 
 def draw(i, _):
-    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/vae{i}.png")
+    network.save_all("out/models/vae/vae" + str(i))
+    gs_img_nd_ls_visualizer(network, network.latent_shape, filename=f"out/vae/vae{i}.png")
 
 
 logs = network.fit(mnist.X_train, batch_size=BATCH_SIZE, epochs=EPOCHS, callbacks=tf.keras.callbacks.LambdaCallback(on_epoch_end=draw))

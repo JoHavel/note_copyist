@@ -18,7 +18,8 @@ network = GAN(
 
 
 def draw(i, _):
-    cat_gs_img_nd_ls_visualizer(network, mnist.N_OF_CATEGORIES, network.latent_shape, filename=f"out/cgan{i}")
+    network.save_all("out/models/cgan/cgan" + str(i))
+    cat_gs_img_nd_ls_visualizer(network, mnist.N_OF_CATEGORIES, network.latent_shape, filename=f"out/cgan/cgan{i}")
 
 
 logs = network.fit(
