@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 
 def _concat_and_save(images, filename: str = "img.png"):
+    """ Concat grid of images to one image and show/save it.
+        `filename == None` for showing image, otherwise image is saved to filename (directory must exist!)
+    """
     columns = []
     for i in images:
         columns.append(np.concatenate(i, axis=0))
