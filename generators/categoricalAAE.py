@@ -6,6 +6,10 @@ import tensorflow_probability as tfp
 
 
 class AAE(tf.keras.Model):
+    """ Adversarial auto encoder (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
+        https://medium.com/vitrox-publication/adversarial-auto-encoder-aae-a3fc86f71758,
+        https://arxiv.org/pdf/1511.05644.pdf.
+    """
     def __init__(
             self,
             encoder: tf.keras.Model,

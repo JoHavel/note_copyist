@@ -5,6 +5,9 @@ import tensorflow_probability as tfp
 
 
 class VAE(tf.keras.Model):
+    """ Variational auto encoder (it learns generating images from latent space "given" by latent_prior)
+        https://ufal.mff.cuni.cz/courses/npfl114/2122-summer#12_deep_generative_models
+    """
     def __init__(
             self,
             encoder: tf.keras.Model,

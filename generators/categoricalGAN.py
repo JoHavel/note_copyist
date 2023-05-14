@@ -6,6 +6,9 @@ import tensorflow_probability as tfp
 
 
 class GAN(tf.keras.Model):
+    """ Generative adversarial network (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
+        https://ufal.mff.cuni.cz/courses/npfl114/2122-summer#12_deep_generative_models
+    """
     def __init__(
             self,
             generator: tf.keras.Model,
