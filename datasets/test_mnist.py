@@ -3,6 +3,7 @@ from datasets import mnist
 
 
 class TestMnist(unittest.TestCase):
+    """ Test if MNIST is properly prepared """
     def test_lengths(self):
         self.assertEqual(mnist.train_len, len(mnist.X_train))
         self.assertEqual(mnist.val_len, len(mnist.X_val))

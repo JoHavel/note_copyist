@@ -22,6 +22,7 @@ X_test = X_test.reshape(X_test.shape[0], *shape).astype('float32') / 255.0
 
 
 class Mnist(Model):
+    """ tf.keras.Model returning images from mnist, always in the same ordering """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.i = 0
