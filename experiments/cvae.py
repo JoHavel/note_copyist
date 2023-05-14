@@ -11,7 +11,7 @@ EPOCHS = 50
 
 network = VAE(
     encoder.encoder_to_normal(mnist.shape, LATENT_SHAPE, hidden_layers=[500, 500]),
-    generator.generator(LATENT_SHAPE, mnist.shape, layers=[500, 500]),
+    generator.generator(LATENT_SHAPE, mnist.shape, hidden_layers=[500, 500]),
     mnist.N_OF_CATEGORIES,
     SEED,
 )
