@@ -1,3 +1,5 @@
+""" Particular experiments with ../generators """
+
 SEED = 42
 THREADS = 3
 
