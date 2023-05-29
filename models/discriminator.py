@@ -5,7 +5,7 @@ from .encoder import _body
 
 def _discriminator_head(inp, last_layer, optimizer: tf.keras.optimizers.Optimizer, name: str) -> tf.keras.Model:
     """ Add the outputting part of discriminator to _body and compile it with Binary... """
-    last_layer = tf.keras.layers.Dense(1, activation="sigmoid")(last_layer)[0]
+    last_layer = tf.keras.layers.Dense(1, activation="sigmoid")(last_layer)[..., 0]
 
     model = tf.keras.Model(inputs=inp, outputs=last_layer, name=name)
 
