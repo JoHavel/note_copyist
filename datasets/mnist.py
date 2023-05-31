@@ -5,7 +5,7 @@ shape = (28, 28, 1)
 
 N_OF_CATEGORIES = 10
 
-train_len = 60000
+train_len = 50000
 val_len = 10000
 test_len = 10000
 

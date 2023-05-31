@@ -25,11 +25,11 @@ class TestMnist(unittest.TestCase):
     def test_reproducibility(self):
         import hashlib
         self.assertEqual(
-            b'\xb2r\x9e\xb0\t2\xbc\x19\xce\xba\xf4\xc1x\x89\xf1\x91',
+            b'\xca\x8d\x87\xf7\xa8L\x99\x19k\xf8^\xc1\xdf\x9d\x83T',
             hashlib.md5(mnist.X_train.tobytes()).digest()
         )
         self.assertEqual(
-            b'\xd4\x1d\x8c\xd9\x8f\x00\xb2\x04\xe9\x80\t\x98\xec\xf8B~',
+            b'_\xa3iGs2N\x91$>\x82\xa7\x08\x94"\x97',
             hashlib.md5(mnist.X_val.tobytes()).digest()
         )
         self.assertEqual(
