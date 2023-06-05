@@ -32,7 +32,7 @@ class RebeloDataset(CategoricalDataset):
         y = {DatasetPart.TRAIN: tf.constant(y)}
         super().__init__(shape, X, y, len(self.categories))
 
-# Bounding boxes
+# Counts
 # Accent 458
 # AltoCleff 208
 # BarLines 524

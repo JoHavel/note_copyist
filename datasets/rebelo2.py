@@ -42,3 +42,21 @@ X = tf.stack(X)
 y = np.array(y)
 
 shape = list(X[0].shape)
+
+# Bounding boxes
+# flat 110 40
+# notesFlags 250 57
+# rests1 150 56
+# altoClef 89 56
+# rests2 136 61
+# trebleClef 204 83
+# naturals 119 38
+# notesOpen 147 51
+# staccatissimo 20 17
+# sharps 108 56
+# accent 35 48
+# beams 127 208
+# time 58 54
+# bassClef 79 38
+# relation 85 625
+# notes 190 55
