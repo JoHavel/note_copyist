@@ -13,10 +13,13 @@ def _concat_and_save(images, filename: str = "img.png"):
 
     ans = np.concatenate(columns, axis=1)
 
-    plt.imshow(ans, interpolation='nearest', cmap="gray")
+    if len(ans.shape) == 2:
+        ans = ans[..., None]
+
     if filename is not None:
-        plt.savefig(filename)
+        tf.keras.utils.save_img(filename, ans)
     else:
+        plt.imshow(ans, interpolation='nearest', cmap="gray")
         plt.show()
 
 
