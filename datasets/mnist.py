@@ -1,33 +1,22 @@
+import tensorflow as tf
 from keras.datasets import mnist
-from keras import Model
 
-shape = (28, 28, 1)
-
-N_OF_CATEGORIES = 10
-
-train_len = 50000
-val_len = 10000
-test_len = 10000
-
-(X_train, y_train), (X_test, y_test) = mnist.load_data()
-
-X_val = X_train[train_len:]
-X_train = X_train[:train_len]
-
-y_val = y_train[train_len:]
-y_train = y_train[:train_len]
-
-X_train = X_train.reshape(X_train.shape[0], *shape).astype('float32') / 255.0
-X_test = X_test.reshape(X_test.shape[0], *shape).astype('float32') / 255.0
+from datasets.dataset import CategoricalDataset, DatasetPart
 
 
-class Mnist(Model):
-    """ tf.keras.Model returning images from mnist, always in the same ordering """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.i = 0
+class MnistDataset(CategoricalDataset):
+    def __init__(self, train_len: int = 50000):
+        (X_train, y_train), (X_test, y_test) = mnist.load_data()
+        X_train = tf.cast(X_train, tf.float32) / 255.0
+        X_test = tf.cast(X_test, tf.float32) / 255.0
 
-    def __call__(self, *args, **kwargs):
-        ans = X_train[self.i][None]
-        self.i += 1
-        return ans
+        X_val = X_train[train_len:]
+        X_train = X_train[:train_len]
+
+        y_val = y_train[train_len:]
+        y_train = y_train[:train_len]
+
+        X = {DatasetPart.TRAIN: X_train, DatasetPart.VAL: X_val, DatasetPart.TEST: X_test}
+        y = {DatasetPart.TRAIN: y_train, DatasetPart.VAL: y_val, DatasetPart.TEST: y_test}
+        super().__init__((28, 28), X, y, 10)
+

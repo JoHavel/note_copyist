@@ -2,30 +2,37 @@ import numpy as np
 import tensorflow as tf
 import os
 
-_IMAGE_DIR = "./downloaded/Rebelo Dataset/MainClasses"
+from datasets.dataset import CategoricalDataset, DatasetPart
 
-categories = []
 
-X = []
-y = []
+class RebeloDataset(CategoricalDataset):
+    def __init__(self, image_dir: str = "./downloaded/Rebelo Dataset/MainClasses"):
+        self.categories = []
 
-for category in os.listdir(_IMAGE_DIR):
+        X = []
+        y = []
 
-    list_ds = tf.data.Dataset.list_files(str(os.path.join(_IMAGE_DIR, category, '*.png')))
-    for f in list_ds:
-        image = tf.io.read_file(f)
-        image = tf.io.decode_png(image, 1)
-        X.append(1 - image/255)
-        y.append(len(categories))
+        for category in os.listdir(image_dir):
 
-    categories.append(category)
+            list_ds = tf.data.Dataset.list_files(str(os.path.join(image_dir, category, '*.png')))
+            for f in list_ds:
+                image = tf.io.read_file(f)
+                image = tf.io.decode_png(image, 1)
+                X.append(1 - image/255)
+                y.append(len(self.categories))
 
-N_OF_CATEGORIES = len(categories)
-X = tf.stack(X)
-y = np.array(y)
+            self.categories.append(category)
 
-shape = list(X[0].shape)
+        X = tf.stack(X)
+        y = np.array(y)
 
+        shape = X[0].shape
+
+        X = {DatasetPart.TRAIN: X}
+        y = {DatasetPart.TRAIN: tf.constant(y)}
+        super().__init__(shape, X, y, len(self.categories))
+
+# Bounding boxes
 # Accent 458
 # AltoCleff 208
 # BarLines 524
