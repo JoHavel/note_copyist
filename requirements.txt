@@ -3,3 +3,4 @@ tensorflow-probability
 matplotlib
 numpy
 opencv-contrib-python
+imagesize
