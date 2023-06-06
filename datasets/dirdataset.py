@@ -115,7 +115,7 @@ class DirDataset(CategoricalDataset):
                 filename
                 for i in range(len(image_dirs))
                 if category in listdirs[i]
-                for filename in tf.data.Dataset.list_files(os.path.join(image_dirs[i], category, '*.png'))
+                for filename in tf.data.Dataset.list_files(os.path.join(image_dirs[i], category, '*.png'), shuffle=False)
             ]
 
             for f in file_list:
