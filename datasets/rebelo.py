@@ -1,36 +1,15 @@
-import numpy as np
-import tensorflow as tf
-import os
+from datasets.dirdataset import DirDataset
 
-from datasets.dataset import CategoricalDataset, DatasetPart
+_SHAPE = (20, 20)
+_DEFAULT_DIR = "./downloaded/Rebelo Dataset/MainClasses"
 
-
-class RebeloDataset(CategoricalDataset):
-    def __init__(self, image_dir: str = "./downloaded/Rebelo Dataset/MainClasses"):
-        self.categories = []
-
-        X = []
-        y = []
-
-        for category in os.listdir(image_dir):
-
-            list_ds = tf.data.Dataset.list_files(str(os.path.join(image_dir, category, '*.png')))
-            for f in list_ds:
-                image = tf.io.read_file(f)
-                image = tf.io.decode_png(image, 1)
-                X.append(1 - image/255)
-                y.append(len(self.categories))
-
-            self.categories.append(category)
-
-        X = tf.stack(X)
-        y = np.array(y)
-
-        shape = X[0].shape
-
-        X = {DatasetPart.TRAIN: X}
-        y = {DatasetPart.TRAIN: tf.constant(y)}
-        super().__init__(shape, X, y, len(self.categories))
+def RebeloDataset(
+        image_dir: str = _DEFAULT_DIR,
+        multiply_of: int | None = None,
+):
+    if multiply_of is not None:
+        return DirDataset(image_dirs=image_dir, multiply_of=multiply_of, shape=_SHAPE)
+    return DirDataset(image_dirs=image_dir)
 
 # Counts
 # Accent 458

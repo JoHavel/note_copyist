@@ -1,47 +1,61 @@
 from functools import reduce
 
-import numpy as np
-import tensorflow as tf
 import os
 
-_IMAGE_DIR = [
-    "./downloaded/Rebelo Dataset/database/real",
-    "./downloaded/Rebelo Dataset/database/syn",
-]
+from datasets.dirdataset import DirDataset
 
-#        3^3   2^3   minimum
-XSHAPE = 270  # 256  # 250
-YSHAPE = 648  # 632  # 625
 
-categories = []
+#         min    3^3    2^3
+_XSHAPE = 250  # 270  # 256
+_YSHAPE = 625  # 648  # 632
 
-X = []
-y = []
+_EXCLUDE = ["references", "unknown", "imgs"]
+_DEFAULT_DIR = "./downloaded/Rebelo Dataset/database"
 
-listdirs = [set(os.listdir(dirr)) for dirr in _IMAGE_DIR]
 
-for category in set(reduce(lambda a, b: a.union(b), listdirs)):
-    if category == "references" or category == "unknown" or category == "imgs":
-        continue
+def _rebelo_subdirs(image_dir: str) -> list[str]:
+    return [os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")]
 
-    list_ds = [filename for i in range(len(_IMAGE_DIR)) if category in listdirs[i] for filename in tf.data.Dataset.list_files(os.path.join(_IMAGE_DIR[i], category, '*.png'))]
-    for f in list_ds:
-        image = tf.io.read_file(f)
-        image = tf.io.decode_png(image, 1)
-        image = 1 - image/255
-        image_x_shape = image.shape[0]
-        image_y_shape = image.shape[1]
-        image = tf.image.pad_to_bounding_box(image, (XSHAPE - image_x_shape)//2, (YSHAPE - image_y_shape)//2, XSHAPE, YSHAPE)
-        X.append(image)
-        y.append(len(categories))
 
-    categories.append(category)
+def RebeloDataset(
+        image_dir: str = _DEFAULT_DIR,
+        multiply_of: int | None = None,
+):
+    return DirDataset(
+        image_dirs=_rebelo_subdirs(image_dir),
+        shape=(_XSHAPE, _YSHAPE),
+        exclude=_EXCLUDE,
+        multiply_of=multiply_of,
+    )
 
-N_OF_CATEGORIES = len(categories)
-X = tf.stack(X)
-y = np.array(y)
 
-shape = list(X[0].shape)
+def RebeloDatasetOneCat(
+        category: str | int,
+        image_dir: str = _DEFAULT_DIR,
+        multiply_of: int | None = None,
+):
+    image_dirs = _rebelo_subdirs(image_dir)
+    listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
+
+    categories = []
+    found = False
+
+    for cat in set(reduce(lambda a, b: a.union(b), listdirs)):
+        if cat in _EXCLUDE:
+            continue
+
+        if not found and (category == cat or category == len(categories)):
+            found = True
+            continue
+
+        categories.append(cat)
+
+    return DirDataset(
+        image_dirs=[os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")],
+        shape=(0, 0),
+        exclude=_EXCLUDE + categories,
+        multiply_of=multiply_of,
+    )
 
 # Bounding boxes
 # flat 110 40
