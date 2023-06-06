@@ -107,7 +107,7 @@ class DirDataset(CategoricalDataset):
     ) -> None:
         listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
 
-        for category in set(reduce(lambda a, b: a.union(b), listdirs)):
+        for category in sorted(set(reduce(lambda a, b: a.union(b), listdirs))):
             if category in exclude:
                 continue
 

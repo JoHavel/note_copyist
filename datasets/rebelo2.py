@@ -37,18 +37,12 @@ def RebeloDatasetOneCat(
     image_dirs = _rebelo_subdirs(image_dir)
     listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
 
-    categories = []
-    found = False
+    categories = list(sorted(set(reduce(lambda a, b: a.union(b), listdirs)).difference(_EXCLUDE)))
 
-    for cat in set(reduce(lambda a, b: a.union(b), listdirs)):
-        if cat in _EXCLUDE:
-            continue
-
-        if not found and (category == cat or category == len(categories)):
-            found = True
-            continue
-
-        categories.append(cat)
+    if isinstance(category, int):
+        categories = categories[:category] + categories[category+1:]
+    else:
+        categories.remove(category)
 
     return DirDataset(
         image_dirs=[os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")],
