@@ -4,6 +4,8 @@ from operator import mul
 import tensorflow as tf
 from .encoder import _fully_connected
 
+_MAGIC_LIMIT = 4096
+
 
 def _body_checks(input_shape: list[int], output_shape: list[int], conv_layers: list[int]):
     """ Throw exception if the arguments are in conflict. """
@@ -86,6 +88,7 @@ def generator(
         kernel_size: int = 4,
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,
+        loss: tf.keras.losses.Loss = None,
 ) -> tf.keras.Model:
     """ Create neural network, that decodes latent data to data """
     inp, last_layer =\
@@ -93,9 +96,15 @@ def generator(
 
     model = tf.keras.Model(inputs=inp, outputs=last_layer, name="Generator")
 
+    if loss is None:
+        if reduce(mul, output_shape) < _MAGIC_LIMIT:
+            loss = tf.losses.BinaryCrossentropy()
+        else:
+            loss = tf.losses.MeanSquaredError()
+
     model.compile(
         optimizer=optimizer if optimizer is not None else tf.keras.optimizers.Adam(),
-        loss=tf.losses.BinaryCrossentropy(),
+        loss=loss,
     )
 
     return model
