@@ -1,8 +1,17 @@
 tensorflow
 tensorflow-probability
-matplotlib
+
 numpy
+
+# Binarizers (and other non-tf image transformations)
 opencv-contrib-python
+
+# Showing images
+matplotlib
+
+# Loading datasets (size of images)
 imagesize
+
+# Downloading and extracting datasets
 requests
 py7zr
