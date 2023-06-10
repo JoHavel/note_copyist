@@ -4,13 +4,14 @@
 
 import tensorflow as tf
 import tensorflow_probability as tfp
+from generators.generator import Generator
 
 from parts.discriminator import Dis
 from parts.encoder import Enc
 from parts.generator import Gen
 
 
-class AAE(tf.keras.Model):
+class AAE(Generator):
     """ Adversarial auto encoder (it learns generating images from latent space "given" by latent_prior)
         https://medium.com/vitrox-publication/adversarial-auto-encoder-aae-a3fc86f71758,
         https://arxiv.org/pdf/1511.05644.pdf.
@@ -22,8 +23,14 @@ class AAE(tf.keras.Model):
             discriminator: Dis,
             seed: int = 42,
             latent_prior=None,
+            string: str | None = None,
     ) -> None:
         super().__init__()
+
+        if string is None:
+            string = f"aae_e{encoder.string}d{decoder.string}di{discriminator.string}"
+
+        self.string = string
 
         self._seed = seed
         self.latent_shape = decoder.inputs[0].shape[1:]
@@ -101,8 +108,8 @@ class AAE(tf.keras.Model):
         self.discriminator.save(path + "dis.h5")
 
     @staticmethod
-    def load_all(path: str, latent_prior=None):  # -> AAE
+    def load_all(path: str, string: str, latent_prior=None):  # -> AAE
         encoder = tf.keras.models.load_model(path + "e.h5")
         decoder = tf.keras.models.load_model(path + "d.h5")
         discriminator = tf.keras.models.load_model(path + "dis.h5")
-        return AAE(encoder, decoder, discriminator, latent_prior=latent_prior)
+        return AAE(encoder, decoder, discriminator, latent_prior=latent_prior, string=string)

@@ -8,8 +8,10 @@ from parts.discriminator import Dis
 from parts.encoder import Enc
 from parts.generator import Gen
 
+from generators.generator import CategoricalGenerator
 
-class AAE(tf.keras.Model):
+
+class AAE(CategoricalGenerator):
     """ Adversarial auto encoder (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
         https://medium.com/vitrox-publication/adversarial-auto-encoder-aae-a3fc86f71758,
         https://arxiv.org/pdf/1511.05644.pdf.
@@ -22,8 +24,14 @@ class AAE(tf.keras.Model):
             n_of_categories: int,
             seed: int = 42,
             latent_prior=None,
+            string: str | None = None,
     ) -> None:
         super().__init__()
+
+        if string is None:
+            string = f"aae_e{encoder.string}d{decoder.string}di{discriminator.string}"
+
+        self.string = string
 
         self._seed = seed
         self.latent_shape = encoder.outputs[0].shape[1:]
@@ -106,8 +114,8 @@ class AAE(tf.keras.Model):
         self.discriminator.save(path + "dis.h5")
 
     @staticmethod
-    def load_all(path: str, n_of_categories: int, latent_prior=None):  # -> AAE
+    def load_all(path: str, string: str, n_of_categories: int, latent_prior=None):  # -> AAE
         encoder = tf.keras.models.load_model(path + "e.h5")
         decoder = tf.keras.models.load_model(path + "d.h5")
         discriminator = tf.keras.models.load_model(path + "dis.h5")
-        return AAE(encoder, decoder, discriminator, n_of_categories, latent_prior=latent_prior)
+        return AAE(encoder, decoder, discriminator, n_of_categories, latent_prior=latent_prior, string=string)

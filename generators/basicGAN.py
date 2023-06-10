@@ -6,8 +6,10 @@ import tensorflow_probability as tfp
 from parts.discriminator import Dis
 from parts.generator import Gen
 
+from generators.generator import Generator
 
-class GAN(tf.keras.Model):
+
+class GAN(Generator):
     """ Generative adversarial network (it learns generating images from latent space "given" by latent_prior)
         https://ufal.mff.cuni.cz/courses/npfl114/2122-summer#12_deep_generative_models
     """
@@ -17,6 +19,7 @@ class GAN(tf.keras.Model):
             discriminator: Dis,
             seed: float = 42,
             latent_prior=None,
+            string: str | None = None,
     ) -> None:
         """
 
@@ -24,6 +27,11 @@ class GAN(tf.keras.Model):
         :param discriminator: input in the shape of generator's output, outputs one number (in range [0, 1])
         """
         super().__init__()
+
+        if string is None:
+            string = f"gan_g{generator.string}d{discriminator.string}"
+
+        self.string = string
 
         self._seed = seed
         self.latent_shape = generator.inputs[0].shape[1:]
@@ -81,7 +89,7 @@ class GAN(tf.keras.Model):
         self.discriminator.save(path + "d.h5")
 
     @staticmethod
-    def load_all(path: str, latent_prior=None):  # -> GAN
+    def load_all(path: str, string: str, latent_prior=None):  # -> GAN
         generator = tf.keras.models.load_model(path + "g.h5")
         discriminator = tf.keras.models.load_model(path + "d.h5")
-        return GAN(generator, discriminator, latent_prior=latent_prior)
+        return GAN(generator, discriminator, latent_prior=latent_prior, string=string)
