@@ -4,6 +4,9 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
+from parts.encoder import Enc
+from parts.generator import Gen
+
 
 class VAE(tf.keras.Model):
     """ Variational adversarial network (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
@@ -11,8 +14,8 @@ class VAE(tf.keras.Model):
     """
     def __init__(
             self,
-            encoder: tf.keras.Model,
-            decoder: tf.keras.Model,
+            encoder: Enc,
+            decoder: Gen,
             n_of_categories: int,
             seed: int = 42,
             latent_prior=None,

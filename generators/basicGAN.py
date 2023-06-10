@@ -3,6 +3,9 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
+from parts.discriminator import Dis
+from parts.generator import Gen
+
 
 class GAN(tf.keras.Model):
     """ Generative adversarial network (it learns generating images from latent space "given" by latent_prior)
@@ -10,8 +13,8 @@ class GAN(tf.keras.Model):
     """
     def __init__(
             self,
-            generator: tf.keras.Model,
-            discriminator: tf.keras.Model,
+            generator: Gen,
+            discriminator: Dis,
             seed: float = 42,
             latent_prior=None,
     ) -> None:

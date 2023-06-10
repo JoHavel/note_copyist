@@ -4,6 +4,9 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
+from parts.cat_discriminator import CDis
+from parts.generator import Gen
+
 
 class GAN(tf.keras.Model):
     """ Generative adversarial network (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
@@ -11,8 +14,8 @@ class GAN(tf.keras.Model):
     """
     def __init__(
             self,
-            generator: tf.keras.Model,
-            discriminator: tf.keras.Model,
+            generator: Gen,
+            discriminator: CDis,
             n_of_categories: int,
             seed: float = 42,
             latent_prior=None,

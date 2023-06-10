@@ -1,7 +1,9 @@
+from typing import TypeAlias
+
 import tensorflow as tf
 
 from .encoder import _body_checks, _conv_downsample, _fully_connected
-from .discriminator import _discriminator_head
+from .discriminator import _discriminator_head, Dis
 
 
 def _body(
@@ -32,6 +34,9 @@ def _body(
     return [inp, cat_inp], last_layer
 
 
+CDis: TypeAlias = Dis
+
+
 def discriminator(
         input_shape: tuple[list[int], int],
         hidden_layers: list[int] = (128,),
@@ -39,7 +44,10 @@ def discriminator(
         kernel_size: int = 5,
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,
-) -> tf.keras.Model:
+) -> CDis:
     """ Create neural network, that encodes labeled data to True (1) or False (0). """
     inp, last_layer = _body(input_shape, hidden_layers, conv_layers, kernel_size, stride)
-    return _discriminator_head(inp, last_layer, optimizer, "Discriminator_with_categorical_input")
+    model: CDis = _discriminator_head(inp, last_layer, optimizer, "Discriminator_with_categorical_input")
+    model.string = f"{hidden_layers},{conv_layers},{kernel_size},{stride}"
+    return model
+

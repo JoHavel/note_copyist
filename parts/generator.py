@@ -1,8 +1,10 @@
 from functools import reduce
 from operator import mul
+from typing import TypeAlias
 
 import tensorflow as tf
 from .encoder import _fully_connected
+from .part import Part
 
 _MAGIC_LIMIT = 4096
 
@@ -79,6 +81,9 @@ def _network(
     return inp, last_layer
 
 
+Gen: TypeAlias = Part
+
+
 def generator(
         input_shape: list[int],
         output_shape: list[int],
@@ -89,12 +94,15 @@ def generator(
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,
         loss: tf.keras.losses.Loss = None,
-) -> tf.keras.Model:
+) -> Gen:
     """ Create neural network, that decodes latent data to data """
     inp, last_layer =\
         _network(input_shape, output_shape, hidden_layers, conv_layers, kernel_size, stride, output_activation)
 
-    model = tf.keras.Model(inputs=inp, outputs=last_layer, name="Generator")
+    model = Gen(
+        inputs=inp, outputs=last_layer, name="Generator",
+        string=f"{hidden_layers},{conv_layers},{kernel_size},{stride}"
+    )
 
     if loss is None:
         if reduce(mul, output_shape) < _MAGIC_LIMIT:

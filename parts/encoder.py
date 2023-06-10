@@ -1,4 +1,8 @@
+from typing import TypeAlias
+
 import tensorflow as tf
+
+from parts.part import Part
 
 
 def _body_checks(input_shape: list[int], conv_layers: list[int]):
@@ -59,11 +63,14 @@ def _body(
     return inp, last_layer
 
 
-def _normal_dist_head(inp, last_layer, output_shape: list[int], name: str) -> tf.keras.Model:
+Enc: TypeAlias = Part
+
+
+def _normal_dist_head(inp, last_layer, output_shape: list[int], name: str) -> Enc:
     """ Add the outputting part of encoder_to_normal to _body """
     mean = tf.keras.layers.Dense(output_shape[-1])(last_layer)
     sd = tf.keras.layers.Dense(output_shape[-1], activation="exponential")(last_layer)
-    return tf.keras.Model(inputs=inp, outputs={"mean": mean, "sd": sd}, name=name)
+    return Enc(inputs=inp, outputs={"mean": mean, "sd": sd}, name=name)
 
 
 def encoder_to_normal(
@@ -73,7 +80,7 @@ def encoder_to_normal(
         conv_layers: list[int] = (),
         kernel_size: int = 5,
         stride: int = 2
-) -> tf.keras.Model:
+) -> Enc:
     """
         Create neural network, that encodes data to mean and standard deviation of multidimensional normal distribution.
     """
@@ -81,4 +88,5 @@ def encoder_to_normal(
     inp, last_layer = _body(input_shape, output_shape, hidden_layers, conv_layers, kernel_size, stride)
     model = _normal_dist_head(inp, last_layer, output_shape, "Encoder_to_normal_dist")
     model.compile(loss=tf.losses.MSE)
+    model.string = f"{hidden_layers},{conv_layers},{kernel_size},{stride}"
     return model
