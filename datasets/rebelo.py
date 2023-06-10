@@ -22,6 +22,8 @@ def download_rebelo():
         os.mkdir(_DOWNLOADED)
 
     print("Downloading Rebelo dataset.", file=stderr)
+    print("https://github.com/apacha/OMR-Datasets#rebelo-dataset", file=stderr)
+    print('A. Rebelo, G. Capela, and J. S. Cardoso, "Optical recognition of music symbols: A comparative study" in International Journal on Document Analysis and Recognition, vol. 13, no. 1, pp. 19-31, 2010. DOI: 10.1007/s10032-009-0100-1 (http://dx.doi.org/10.1007/s10032-009-0100-1)', file=stderr)
 
     with get(_URL) as zip_request:
         with open(os.path.join(_ZIP_FILE), "wb") as zip_file:
