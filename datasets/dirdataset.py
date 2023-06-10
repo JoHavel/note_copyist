@@ -13,6 +13,7 @@ class DirDataset(CategoricalDataset):
     def __init__(
             self,
             image_dirs: list[str] | str,
+            string: str,
             shape: tuple[int, int] | tuple[int, int, int] | None = None,
             exclude: list[str] | tuple[str] | str = (),
             inverse: bool = True,
@@ -50,7 +51,7 @@ class DirDataset(CategoricalDataset):
 
         X = {DatasetPart.TRAIN: X}
         y = {DatasetPart.TRAIN: y}
-        super().__init__(shape, X, y, len(self.categories))
+        super().__init__(shape, X, y, string, len(self.categories))
 
     @staticmethod
     def _load_dataset(

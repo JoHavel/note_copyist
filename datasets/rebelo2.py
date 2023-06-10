@@ -12,6 +12,8 @@ _YSHAPE = 625  # 648  # 632
 _EXCLUDE = ["references", "unknown", "imgs"]
 _DEFAULT_DIR = os.path.join(_DATASET, "database")
 
+_STRING = "rebelo2"
+
 
 def _rebelo_subdirs(image_dir: str) -> list[str]:
     return [os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")]
@@ -23,6 +25,7 @@ def RebeloDataset(
 ):
     return DirDataset(
         image_dirs=_rebelo_subdirs(image_dir),
+        string=_STRING,
         shape=(_XSHAPE, _YSHAPE),
         exclude=_EXCLUDE,
         multiply_of=multiply_of,
@@ -47,6 +50,7 @@ def RebeloDatasetOneCat(
 
     return DirDataset(
         image_dirs=[os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")],
+        string=_STRING,
         shape=(0, 0),
         exclude=_EXCLUDE + categories,
         multiply_of=multiply_of,

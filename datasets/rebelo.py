@@ -11,6 +11,8 @@ _DATASET = os.path.join(_DOWNLOADED, "Rebelo Dataset")
 _7ZIP_FILES = [os.path.join(_DATASET, "database1.7z"), os.path.join(_DATASET, "database2.7z"), os.path.join(_DATASET, "database3.7z")]
 _DEFAULT_DIR = os.path.join(_DATASET, "MainClasses")
 
+_STRING = "rebelo1"
+
 
 def download_rebelo():
     from sys import stderr
@@ -46,8 +48,8 @@ def RebeloDataset(
         multiply_of: int | None = None,
 ):
     if multiply_of is not None:
-        return DirDataset(image_dirs=image_dir, multiply_of=multiply_of, shape=_SHAPE, create=download_rebelo)
-    return DirDataset(image_dirs=image_dir, create=download_rebelo)
+        return DirDataset(image_dirs=image_dir, multiply_of=multiply_of, shape=_SHAPE, create=download_rebelo, string=_STRING)
+    return DirDataset(image_dirs=image_dir, create=download_rebelo, string=_STRING)
 
 # Counts
 # Accent 458

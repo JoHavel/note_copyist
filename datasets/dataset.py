@@ -12,10 +12,11 @@ class DatasetPart(Enum):
 
 
 class Dataset:
-    def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor]):
+    def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor], string: str):
         self.shape = shape
         self.X = X
         self.y = y
+        self.string = string
 
     @property
     def X_train(self):
@@ -41,6 +42,9 @@ class Dataset:
     def y_test(self):
         return self.y[DatasetPart.TEST]
 
+    def __str__(self):
+        return self.string
+
 
 class DatasetModel(tf.keras.Model):
     """ tf.keras.Model returning images from dataset, always in the same ordering """
@@ -57,9 +61,9 @@ class DatasetModel(tf.keras.Model):
 
 
 class CategoricalDataset(Dataset):
-    def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor],
+    def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor], string: str,
                  n_of_categories: int):
-        super().__init__(shape, X, y)
+        super().__init__(shape, X, y, string)
         self.n_of_categories = n_of_categories
 
     def one_category(self, category: int) -> Dataset:
@@ -68,7 +72,7 @@ class CategoricalDataset(Dataset):
         for key in self.X.keys():
             X_new[key] = tf.boolean_mask(self.X[key], self.y[key] == category)
             y_new[key] = tf.boolean_mask(self.y[key], self.y[key] == category)
-        return Dataset(self.shape, X_new, y_new)
+        return Dataset(self.shape, X_new, y_new, self.string)
 
 
 class CategoricalDatasetModel(tf.keras.Model):

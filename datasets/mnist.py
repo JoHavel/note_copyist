@@ -18,5 +18,5 @@ class MnistDataset(CategoricalDataset):
 
         X = {DatasetPart.TRAIN: X_train, DatasetPart.VAL: X_val, DatasetPart.TEST: X_test}
         y = {DatasetPart.TRAIN: y_train, DatasetPart.VAL: y_val, DatasetPart.TEST: y_test}
-        super().__init__((28, 28), X, y, 10)
+        super().__init__((28, 28), X, y, "mnist", 10)
 
