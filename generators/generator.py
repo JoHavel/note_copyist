@@ -4,8 +4,8 @@ import tensorflow as tf
 
 
 class Generator(tf.keras.Model, abc.ABC):
-    latent_shape: tuple[int] = abc.abstractproperty
-    string: str = abc.abstractproperty
+    latent_shape: tuple[int]
+    string: str
 
     def __str__(self) -> str:
         return self.string
@@ -21,7 +21,7 @@ class Generator(tf.keras.Model, abc.ABC):
 
 
 class CategoricalGenerator(Generator, abc.ABC):
-    n_of_categories: int = abc.abstractproperty
+    n_of_categories: int
 
     @staticmethod
     @abc.abstractmethod
