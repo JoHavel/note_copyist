@@ -3,14 +3,14 @@ from functools import reduce
 import os
 
 from datasets.dirdataset import DirDataset
-
+from datasets.rebelo import _DATASET, download_rebelo
 
 #         min    3^3    2^3
 _XSHAPE = 250  # 270  # 256
 _YSHAPE = 625  # 648  # 632
 
 _EXCLUDE = ["references", "unknown", "imgs"]
-_DEFAULT_DIR = "./downloaded/Rebelo Dataset/database"
+_DEFAULT_DIR = os.path.join(_DATASET, "database")
 
 
 def _rebelo_subdirs(image_dir: str) -> list[str]:
@@ -26,6 +26,7 @@ def RebeloDataset(
         shape=(_XSHAPE, _YSHAPE),
         exclude=_EXCLUDE,
         multiply_of=multiply_of,
+        create=download_rebelo,
     )
 
 
@@ -49,6 +50,7 @@ def RebeloDatasetOneCat(
         shape=(0, 0),
         exclude=_EXCLUDE + categories,
         multiply_of=multiply_of,
+        create=download_rebelo,
     )
 
 # Bounding boxes
