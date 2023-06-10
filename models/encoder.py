@@ -16,7 +16,7 @@ def _conv_downsample(last_layer, conv_layers: list[int], kernel_size: int, strid
         last_layer = last_layer[..., None]
 
     for cl in conv_layers:
-        last_layer = tf.keras.layers.Conv2D(cl, kernel_size=kernel_size, strides=stride, use_bias=False)(last_layer)
+        last_layer = tf.keras.layers.Conv2D(cl, kernel_size=kernel_size, strides=stride, use_bias=False, padding="same")(last_layer)
         last_layer = tf.keras.layers.BatchNormalization()(last_layer)
         last_layer = tf.keras.layers.Activation(activation="relu")(last_layer)
 

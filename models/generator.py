@@ -18,9 +18,6 @@ def _conv_upsample(last_layer, conv_layers: list[int], kernel_size: int, stride:
     if len(conv_layers) == 0:
         return last_layer
 
-    if add_dim:
-        last_layer = last_layer[..., None]
-
     for cl in conv_layers[1:]:
         last_layer = tf.keras.layers.Conv2DTranspose(cl, kernel_size=kernel_size, strides=stride, padding="same", use_bias=False)(last_layer)
         last_layer = tf.keras.layers.BatchNormalization()(last_layer)
@@ -55,9 +52,9 @@ def _network(
 
     last_layer = _fully_connected(last_layer, hidden_layers)
 
-    # Prepare for convolutional layers
+    # Prepare for convolutional layers FIXME len(input_shape) != 1 ([X, Y, Channel] vs. [X, Y])
     if len(input_shape) == 1 and len(conv_layers) > 0:
-        counted_shape = output_shape[:-2] + [
+        counted_shape = list(output_shape[:-2]) + [
             output_shape[-2] // stride ** (len(conv_layers)),
             output_shape[-1] // stride ** (len(conv_layers)),
             conv_layers[0]
