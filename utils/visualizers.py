@@ -31,7 +31,7 @@ def gs_img_2d_ls_visualizer(network: tf.keras.Model, n_of_images: int = 10, file
     for i in range(n_of_images):
         images.append([])
         for j in range(n_of_images):
-            images[-1].append(network(np.array([i/n_of_images, j/n_of_images])[None])[0])
+            images[-1].append(network(np.array([2*(i/(n_of_images - 1) - 0.5), 2*(j/(n_of_images - 1) - 0.5)])[None])[0])
 
     _concat_and_save(images, filename)
 
@@ -113,7 +113,7 @@ def cat_gs_img_2d_ls_visualizer(
             for j in range(n_of_images):
                 images[-1].append(network(np.concatenate([
                     category,
-                    [2*(i/n_of_images - 0.5), 2*(j/n_of_images - 0.5)]
+                    [2*(i/(n_of_images - 1) - 0.5), 2*(j/(n_of_images - 1) - 0.5)]
                 ])[None])[0])
 
         _concat_and_save(images, (filename + "c" + str(c) + extension) if filename is not None else None)
