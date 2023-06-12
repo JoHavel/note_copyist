@@ -5,13 +5,13 @@ import tensorflow as tf
 from parts.part import Part
 
 
-def _body_checks(input_shape: list[int], conv_layers: list[int]):
+def _body_checks(input_shape: list[int] | tuple[int, ...], conv_layers: list[int] | tuple[int, ...]):
     """ Throw exception if the arguments are in conflict. """
     if len(conv_layers) != 0 and len(input_shape) < 2:
         raise ValueError("Conv for 1D or scalar data!")
 
 
-def _conv_downsample(last_layer, conv_layers: list[int], kernel_size: int, stride: int, add_dim: bool):  # -> last_layer
+def _conv_downsample(last_layer, conv_layers: list[int] | tuple[int, ...], kernel_size: int, stride: int, add_dim: bool):  # -> last_layer
     """ Apply convolutional layers """
     if len(conv_layers) == 0:
         return last_layer
@@ -30,7 +30,7 @@ def _conv_downsample(last_layer, conv_layers: list[int], kernel_size: int, strid
     return last_layer
 
 
-def _fully_connected(last_layer, layers: list[int]):  # -> last_layer
+def _fully_connected(last_layer, layers: list[int] | tuple[int, ...]):  # -> last_layer
     """ Apply fully connected (=dense) layers """
     for layer in layers:
         last_layer = tf.keras.layers.Dense(layer, activation="relu")(last_layer)
@@ -38,10 +38,10 @@ def _fully_connected(last_layer, layers: list[int]):  # -> last_layer
 
 
 def _body(
-        input_shape: list[int],
-        output_shape: list[int],
-        hidden_layers: list[int],
-        conv_layers: list[int],
+        input_shape: list[int] | tuple[int, ...],
+        output_shape: list[int] | tuple[int, ...],
+        hidden_layers: list[int] | tuple[int, ...],
+        conv_layers: list[int] | tuple[int, ...],
         kernel_size: int,
         stride: int
 ):  # -> (input, last_layer)
@@ -66,7 +66,7 @@ def _body(
 Enc: TypeAlias = Part
 
 
-def _normal_dist_head(inp, last_layer, output_shape: list[int], name: str) -> Enc:
+def _normal_dist_head(inp, last_layer, output_shape: list[int] | tuple[int, ...], name: str) -> Enc:
     """ Add the outputting part of encoder_to_normal to _body """
     mean = tf.keras.layers.Dense(output_shape[-1])(last_layer)
     sd = tf.keras.layers.Dense(output_shape[-1], activation="exponential")(last_layer)
@@ -74,10 +74,10 @@ def _normal_dist_head(inp, last_layer, output_shape: list[int], name: str) -> En
 
 
 def encoder_to_normal(
-        input_shape: list[int],
-        output_shape: list[int],
-        hidden_layers: list[int] = (128,),
-        conv_layers: list[int] = (),
+        input_shape: list[int] | tuple[int, ...],
+        output_shape: list[int] | tuple[int, ...],
+        hidden_layers: list[int] | tuple[int, ...] = (128,),
+        conv_layers: list[int] | tuple[int, ...] = (),
         kernel_size: int = 5,
         stride: int = 2
 ) -> Enc:

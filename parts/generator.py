@@ -9,7 +9,7 @@ from .part import Part
 _MAGIC_LIMIT = 4096
 
 
-def _body_checks(input_shape: list[int], output_shape: list[int], conv_layers: list[int]):
+def _body_checks(input_shape: list[int] | tuple[int, ...], output_shape: list[int] | tuple[int, ...], conv_layers: list[int] | tuple[int, ...]):
     """ Throw exception if the arguments are in conflict. """
     if len(conv_layers) != 0 and len(output_shape) < 2:
         raise ValueError("Conv for 1D or scalar data!")
@@ -17,7 +17,7 @@ def _body_checks(input_shape: list[int], output_shape: list[int], conv_layers: l
     # TODO check compatibility of input_shape and output_shape if len(input_shape) > 1 and len(output_shape) > 1
 
 
-def _conv_upsample(last_layer, conv_layers: list[int], kernel_size: int, stride: int, add_dim: bool, output_activation, output_shape: list[int],):  # -> last_layer
+def _conv_upsample(last_layer, conv_layers: list[int] | tuple[int, ...], kernel_size: int, stride: int, add_dim: bool, output_activation, output_shape: list[int] | tuple[int, ...],):  # -> last_layer
     """ Apply transposed convolutional layers """
     if len(conv_layers) == 0:
         return last_layer
@@ -35,10 +35,10 @@ def _conv_upsample(last_layer, conv_layers: list[int], kernel_size: int, stride:
 
 
 def _network(
-        input_shape: list[int],
-        output_shape: list[int],
-        hidden_layers: list[int],
-        conv_layers: list[int],
+        input_shape: list[int] | tuple[int, ...],
+        output_shape: list[int] | tuple[int, ...],
+        hidden_layers: list[int] | tuple[int, ...],
+        conv_layers: list[int] | tuple[int, ...],
         kernel_size: int,
         stride: int,
         output_activation,
@@ -85,11 +85,11 @@ Gen: TypeAlias = Part
 
 
 def generator(
-        input_shape: list[int],
-        output_shape: list[int],
+        input_shape: list[int] | tuple[int, ...],
+        output_shape: list[int] | tuple[int, ...],
         output_activation="sigmoid",
-        hidden_layers: list[int] = (128,),
-        conv_layers: list[int] = (),
+        hidden_layers: list[int] | tuple[int, ...] = (128,),
+        conv_layers: list[int] | tuple[int, ...] = (),
         kernel_size: int = 4,
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,
