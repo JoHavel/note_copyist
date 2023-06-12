@@ -15,3 +15,6 @@ imagesize
 # Downloading and extracting datasets
 requests
 py7zr
+
+# Command line arguments
+argparse
