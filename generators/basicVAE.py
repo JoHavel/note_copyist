@@ -60,7 +60,7 @@ class VAE(Generator):
             # Sum losses
             loss = (
                     latent_loss * tf.cast(self.latent_shape, tf.float32) +
-                    reconstruction_loss * tf.cast(tf.reduce_prod(tf.shape(images)[1:]), tf.float32)
+                    reconstruction_loss * tf.cast(tf.reduce_prod(tf.shape(images)[1:-1]), tf.float32)
             )
 
         self.optimizer.apply_gradients(zip(

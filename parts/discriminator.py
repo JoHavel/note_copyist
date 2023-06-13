@@ -25,9 +25,9 @@ def _discriminator_head(inp, last_layer, optimizer: tf.keras.optimizers.Optimize
 
 
 def discriminator(
-        input_shape: list[int] | tuple[int, ...],
-        hidden_layers: list[int] | tuple[int, ...] = (128,),
-        conv_layers: list[int] | tuple[int, ...] = (),
+        input_shape: list[int],
+        hidden_layers: list[int] = (128,),
+        conv_layers: list[int] = (),
         kernel_size: int = 5,
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,

@@ -38,8 +38,6 @@ class AdaptiveBinarize(tf.keras.Model):
         int_im = tf.cast(self.model(*args, **kwargs)[..., 0].numpy()*255, tf.uint8).numpy()
         binarized_im = np.zeros_like(int_im)
         for i in range(len(int_im)):
-            binarized_im[i] = cv.medianBlur(
-                cv.adaptiveThreshold(int_im[i], 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, 0), 5
-            )
+            binarized_im[i] = cv.adaptiveThreshold(int_im[i], 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, -2)
             # binarized_im[i] = cv.threshold(int_im[i], 0, 255, cv.THRESH_OTSU)[1]
         return binarized_im/255

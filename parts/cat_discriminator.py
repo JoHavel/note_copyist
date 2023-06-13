@@ -7,9 +7,9 @@ from .discriminator import _discriminator_head, Dis
 
 
 def _body(
-        input_shape: tuple[list[int] | tuple[int, ...], int],
-        hidden_layers: list[int] | tuple[int, ...],
-        conv_layers: list[int] | tuple[int, ...],
+        input_shape: tuple[list[int], int],
+        hidden_layers: list[int],
+        conv_layers: list[int],
         kernel_size: int,
         stride: int
 ):  # -> (input, last_layer)
@@ -38,9 +38,9 @@ CDis: TypeAlias = Dis
 
 
 def discriminator(
-        input_shape: tuple[list[int] | tuple[int, ...], int],
-        hidden_layers: list[int] | tuple[int, ...] = (128,),
-        conv_layers: list[int] | tuple[int, ...] = (),
+        input_shape: tuple[list[int], int],
+        hidden_layers: list[int] = (128,),
+        conv_layers: list[int] = (),
         kernel_size: int = 5,
         stride: int = 2,
         optimizer: tf.keras.optimizers.Optimizer = None,
