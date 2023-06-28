@@ -19,6 +19,7 @@ class DirDataset(CategoricalDataset):
             inverse: bool = True,
             multiply_of: int | None = None,
             create=lambda *args: (),
+            category: str | int | None = None,
     ):
         if not all([os.path.exists(dirr) for dirr in image_dirs]):
             create()
@@ -28,6 +29,18 @@ class DirDataset(CategoricalDataset):
 
         if isinstance(exclude, str):
             exclude = [exclude]
+
+        if category is not None:
+            listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
+            other_categories = list(sorted(set(reduce(lambda a, b: a.union(b), listdirs)).difference(set(exclude))))
+
+            if isinstance(category, int):
+                other_categories = other_categories[:category] + other_categories[category+1:]
+            else:
+                other_categories.remove(category)
+
+            exclude = other_categories + list(exclude)
+
 
         if shape is not None and (shape[0] == 0 and shape[1] == 0):
             shape = (*DirDataset._find_bounding_box(image_dirs, exclude), *shape[2:])

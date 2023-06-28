@@ -22,39 +22,16 @@ def _rebelo_subdirs(image_dir: str) -> list[str]:
 def RebeloDataset(
         image_dir: str = _DEFAULT_DIR,
         multiply_of: int | None = None,
+        category: str | int = None,
 ):
     return DirDataset(
         image_dirs=_rebelo_subdirs(image_dir),
         string=_STRING,
-        shape=(_XSHAPE, _YSHAPE),
+        shape=(_XSHAPE, _YSHAPE) if category is None else (0, 0),
         exclude=_EXCLUDE,
         multiply_of=multiply_of,
         create=download_rebelo,
-    )
-
-
-def RebeloDatasetOneCat(
-        category: str | int,
-        image_dir: str = _DEFAULT_DIR,
-        multiply_of: int | None = None,
-):
-    image_dirs = _rebelo_subdirs(image_dir)
-    listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
-
-    categories = list(sorted(set(reduce(lambda a, b: a.union(b), listdirs)).difference(_EXCLUDE)))
-
-    if isinstance(category, int):
-        categories = categories[:category] + categories[category+1:]
-    else:
-        categories.remove(category)
-
-    return DirDataset(
-        image_dirs=[os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")],
-        string=_STRING,
-        shape=(0, 0),
-        exclude=_EXCLUDE + categories,
-        multiply_of=multiply_of,
-        create=download_rebelo,
+        category=category,
     )
 
 # Bounding boxes

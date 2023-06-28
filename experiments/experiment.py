@@ -6,6 +6,7 @@ import tensorflow as tf
 import os
 from argparse import ArgumentParser, Namespace
 
+from datasets.dirdataset import DirDataset
 from utils.visualizers import gs_img_2d_ls_visualizer, gs_img_3d_ls_visualizer, gs_img_nd_ls_visualizer, \
     cat_gs_img_2d_ls_visualizer, cat_gs_img_nd_ls_visualizer
 
@@ -60,11 +61,17 @@ class CategoryStyle(StrEnum):
     BASIC_FOR_EVERY_CAT = "onecat"
 
 
-_DATASETS = {"mnist": MnistDataset, "rebelo1": rebelo.RebeloDataset, "rebelo2": rebelo2.RebeloDataset}
+_DATASETS = {
+    "mnist": MnistDataset,
+    "rebelo1": rebelo.RebeloDataset,
+    "rebelo2": rebelo2.RebeloDataset,
+    "other": lambda **kwargs: DirDataset(image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
+}
 _DATASETS_ONECAT = {
     "mnist": lambda category, **kwargs: MnistDataset(**kwargs).one_category(category),
     "rebelo1": lambda category, **kwargs: rebelo.RebeloDataset(**kwargs).one_category(category),
-    "rebelo2": rebelo2.RebeloDatasetOneCat
+    "rebelo2": lambda category, **kwargs: rebelo2.RebeloDataset(category=category, **kwargs),
+    "other": lambda category, **kwargs: DirDataset(category=category, image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
 }
 
 _OUT = "out"
