@@ -115,7 +115,7 @@ class AAE(CategoricalGenerator):
 
     @staticmethod
     def load_all(path: str, string: str, n_of_categories: int, latent_prior=None):  # -> AAE
-        encoder = tf.keras.models.load_model(path + "e.h5")
-        decoder = tf.keras.models.load_model(path + "d.h5")
-        discriminator = tf.keras.models.load_model(path + "dis.h5")
+        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Part': Enc})
+        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Gen})
+        discriminator = tf.keras.models.load_model(path + "dis.h5", custom_objects={'Part': Dis})
         return AAE(encoder, decoder, discriminator, n_of_categories, latent_prior=latent_prior, string=string)

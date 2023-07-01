@@ -90,6 +90,6 @@ class GAN(Generator):
 
     @staticmethod
     def load_all(path: str, string: str, latent_prior=None):  # -> GAN
-        generator = tf.keras.models.load_model(path + "g.h5")
-        discriminator = tf.keras.models.load_model(path + "d.h5")
+        generator = tf.keras.models.load_model(path + "g.h5", custom_objects={'Part': Gen})
+        discriminator = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Dis})
         return GAN(generator, discriminator, latent_prior=latent_prior, string=string)
