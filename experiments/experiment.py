@@ -343,7 +343,7 @@ class Experiment:
                             discriminator(
                                 self.latent_shape,
                                 hidden_layers=args.dis_layers, conv_layers=args.dis_conv_layers,
-                                stride=args.dis_stride, kernel_size=args.dis_kernel_size,
+                                stride=args.dis_stride, kernel_size=args.dis_kernel,
                             ),
                         )
                         network.compile(optimizer=tf.optimizers.Adam())
