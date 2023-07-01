@@ -29,7 +29,7 @@ class GAN(Generator):
         super().__init__()
 
         if string is None:
-            string = f"gan_g{generator.string}d{discriminator.string}"
+            string = f"gan_l{generator.inputs[0].shape[1:]}g{generator.string}d{discriminator.string}"
 
         self.string = string
 

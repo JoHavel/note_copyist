@@ -29,7 +29,7 @@ class AAE(CategoricalGenerator):
         super().__init__()
 
         if string is None:
-            string = f"aae_e{encoder.string}d{decoder.string}di{discriminator.string}"
+            string = f"aae_l{encoder.outputs[0].shape[1:]}e{encoder.string}d{decoder.string}di{discriminator.string}"
 
         self.string = string
 

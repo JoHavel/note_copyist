@@ -24,7 +24,7 @@ class VAE(Generator):
         super().__init__()
 
         if string is None:
-            string = f"vae_e{encoder.string}d{decoder.string}"
+            string = f"vae_l{decoder.inputs[0].shape[1:]}e{encoder.string}d{decoder.string}"
 
         self.string = string
 
