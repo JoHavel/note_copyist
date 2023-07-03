@@ -7,7 +7,7 @@ import os
 from argparse import ArgumentParser, Namespace
 
 from datasets.dirdataset import DirDataset
-from utils.visualizers import gs_img_2d_ls_visualizer, gs_img_3d_ls_visualizer, gs_img_nd_ls_visualizer, \
+from utils.faster_visualizers import gs_img_2d_ls_visualizer, gs_img_3d_ls_visualizer, gs_img_nd_ls_visualizer, \
     cat_gs_img_2d_ls_visualizer, cat_gs_img_nd_ls_visualizer
 
 from datasets.dataset import Dataset, CategoricalDataset
@@ -356,24 +356,29 @@ class Experiment:
     def get_visualizer(self, n_of_images: int) -> Callable[[str, tf.keras.Model], None]:
         if self.cat == CategoryStyle.CATEGORICAL:
             if sum(self.latent_shape) == 2:
+                @tf.function
                 def visualizer(filename, network) -> None:
                     cat_gs_img_2d_ls_visualizer(
                         network, network.n_of_categories, n_of_images, filename
                     )
             else:
+                @tf.function
                 def visualizer(filename, network) -> None:
                     cat_gs_img_nd_ls_visualizer(
                         network, network.n_of_categories, self.latent_shape, n_of_images, filename
                     )
         else:
             if sum(self.latent_shape) == 2:
+                @tf.function
                 def visualizer(filename, network) -> None:
                     gs_img_2d_ls_visualizer(network, n_of_images, filename + ".png")
             else:
                 if sum(self.latent_shape) == 3:
+                    @tf.function
                     def visualizer(filename, network) -> None:
                         gs_img_3d_ls_visualizer(network, n_of_images, filename + ".png")
                 else:
+                    @tf.function
                     def visualizer(filename, network) -> None:
                         gs_img_nd_ls_visualizer(network, self.latent_shape, n_of_images, filename + ".png")
         return visualizer
@@ -396,7 +401,7 @@ class Experiment:
                 os.path.join(self.directory, _MODEL_DIR, f"e{i}{'' if self.category is None else f'c{self.category}'}")
             )
             self.visualizer(
-                os.path.join(self.directory, _IMAGE_DIR, f"e{i}{'' if self.category is None else f'c{self.category}'}"),
+                tf.constant(os.path.join(self.directory, _IMAGE_DIR, f"e{i}{'' if self.category is None else f'c{self.category}'}")),
                 self.network,
             )
 
