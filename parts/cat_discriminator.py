@@ -1,53 +1,48 @@
-from typing import TypeAlias
-
 import tensorflow as tf
+from collections.abc import Callable
 
-from .encoder import _body_checks, _conv_downsample, _fully_connected
-from .discriminator import _discriminator_head, Dis
-
-
-def _body(
-        input_shape: tuple[list[int] | tuple[int, ...], int],
-        hidden_layers: list[int] | tuple[int, ...],
-        conv_layers: list[int] | tuple[int, ...],
-        kernel_size: int,
-        stride: int
-):  # -> (input, last_layer)
-    """ Create the processing part of neural network (input, conv layers, hidden layers) """
-    _body_checks(input_shape[0], conv_layers)
-
-    # INPUT
-    inp = tf.keras.layers.Input(input_shape[0])
-    last_layer = inp
-
-    # LAYERS
-    last_layer = _conv_downsample(last_layer, conv_layers, kernel_size, stride, len(input_shape[0]) == 2)
-
-    if len(input_shape[0]) > 1:
-        last_layer = tf.keras.layers.Flatten()(last_layer)
-
-    cat_inp = tf.keras.layers.Input([input_shape[1]])
-    last_layer = tf.keras.layers.Concatenate()([last_layer, cat_inp])
-
-    last_layer = _fully_connected(last_layer, hidden_layers)
-
-    return [inp, cat_inp], last_layer
+from utils.my_typing import String, IntSequenceOrInt, IntSequence, seq_or_int_2_seq
+from .downsample import Downsample
 
 
-CDis: TypeAlias = Dis
-
-
-def discriminator(
-        input_shape: tuple[list[int] | tuple[int, ...], int],
-        hidden_layers: list[int] | tuple[int, ...] = (128,),
-        conv_layers: list[int] | tuple[int, ...] = (),
-        kernel_size: int = 5,
-        stride: int = 2,
-        optimizer: tf.keras.optimizers.Optimizer = None,
-) -> CDis:
+class CatDiscriminator(tf.keras.Model, String):
     """ Create neural network, that encodes labeled data to True (1) or False (0). """
-    inp, last_layer = _body(input_shape, hidden_layers, conv_layers, kernel_size, stride)
-    model: CDis = _discriminator_head(inp, last_layer, optimizer, "Discriminator_with_categorical_input")
-    model.string = f"{hidden_layers},{conv_layers},{kernel_size},{stride}"
-    return model
+    _downsample: Downsample
+    _base_model_initialized = False  # Hack, so we can set attributes before super().__init__()
 
+    def __init__(
+            self,
+            input_shape: tuple[IntSequenceOrInt, int],
+
+            hidden_layers: IntSequence = (128,),
+            conv_layers: IntSequence = (),
+
+            kernel_sizes: IntSequenceOrInt = 5,
+            strides: IntSequenceOrInt = 2,
+
+            hidden_activation: str | Callable = "relu",
+
+            optimizer: tf.keras.optimizers.Optimizer = None,
+
+            name: str = "Discriminator_with_categorical_input",
+    ):
+        self._downsample = Downsample(
+            input_shape[0], hidden_layers, conv_layers, kernel_sizes, strides, hidden_activation,
+            flat=True, input_after_conv_shape=input_shape[1],
+        )
+        self._downsample.compile()
+
+        inp = [tf.keras.layers.Input(seq_or_int_2_seq(input_shape[0])), tf.keras.layers.Input([input_shape[1]])]
+        last_layer = self._downsample(inp)
+        last_layer = tf.keras.layers.Dense(1, activation="sigmoid")(last_layer)[..., 0]
+
+        super().__init__(inputs=inp, outputs=last_layer, name=name)
+        self.compile(
+            optimizer=optimizer if optimizer is not None else tf.keras.optimizers.Adam(),
+            loss=tf.losses.BinaryCrossentropy(),
+            metrics=tf.metrics.BinaryAccuracy(),
+        )
+
+    @property
+    def string(self):
+        return self._downsample.string

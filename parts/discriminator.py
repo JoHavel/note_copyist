@@ -1,39 +1,50 @@
-from typing import TypeAlias
-
 import tensorflow as tf
+from collections.abc import Callable
 
-from .encoder import _body
-from .part import Part
-
-
-Dis: TypeAlias = Part
+from utils.my_typing import IntSequenceOrInt, IntSequence, String, seq_or_int_2_seq
+from .downsample import Downsample
 
 
-def _discriminator_head(inp, last_layer, optimizer: tf.keras.optimizers.Optimizer, name: str) -> Dis:
-    """ Add the outputting part of discriminator to _body and compile it with Binary... """
-    last_layer = tf.keras.layers.Dense(1, activation="sigmoid")(last_layer)[..., 0]
+class Discriminator(tf.keras.Model, String):  # FIXME typing (Discriminator is not CatDiscriminator)
+    """ Neural network, that encodes data to True (1) or False (0). """
+    _downsample: Downsample
+    _base_model_initialized = False  # Hack, so we can set attributes before super().__init__()
 
-    model = Dis(inputs=inp, outputs=last_layer, name=name)
+    def __init__(
+            self,
+            input_shape: IntSequenceOrInt,
 
-    model.compile(
-        optimizer=optimizer if optimizer is not None else tf.keras.optimizers.Adam(),
-        loss=tf.losses.BinaryCrossentropy(),
-        metrics=tf.metrics.BinaryAccuracy(),
-    )
+            hidden_layers: IntSequence = (128,),
+            conv_layers: IntSequence = (),
 
-    return model
+            kernel_sizes: IntSequenceOrInt = 5,
+            strides: IntSequenceOrInt = 2,
 
+            hidden_activation: str | Callable = "relu",
 
-def discriminator(
-        input_shape: list[int] | tuple[int, ...],
-        hidden_layers: list[int] | tuple[int, ...] = (128,),
-        conv_layers: list[int] | tuple[int, ...] = (),
-        kernel_size: int = 5,
-        stride: int = 2,
-        optimizer: tf.keras.optimizers.Optimizer = None,
-) -> Dis:
-    """ Create neural network, that encodes data to True (1) or False (0). """
-    inp, last_layer = _body(input_shape, [1], hidden_layers, conv_layers, kernel_size, stride)
-    model = _discriminator_head(inp, last_layer, optimizer, "Discriminator")
-    model.string = f"{hidden_layers},{conv_layers},{kernel_size},{stride}"
-    return model
+            optimizer: tf.keras.optimizers.Optimizer = None,
+
+            name: str = "Discriminator",
+    ):
+        self._downsample = Downsample(
+            input_shape, hidden_layers, conv_layers, kernel_sizes, strides, hidden_activation,
+            flat=True,
+        )
+        self._downsample.compile()
+
+        input_shape = seq_or_int_2_seq(input_shape)
+
+        inp = tf.keras.layers.Input(input_shape)
+        last_layer = self._downsample(inp)
+        last_layer = tf.keras.layers.Dense(1, activation="sigmoid")(last_layer)[..., 0]
+
+        super().__init__(inputs=inp, outputs=last_layer, name=name)
+        self.compile(
+            optimizer=optimizer if optimizer is not None else tf.keras.optimizers.Adam(),
+            loss=tf.losses.BinaryCrossentropy(),
+            metrics=tf.metrics.BinaryAccuracy(),
+        )
+
+    @property
+    def string(self):
+        return self._downsample.string
