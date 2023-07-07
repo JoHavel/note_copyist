@@ -4,6 +4,8 @@ from enum import Enum
 import numpy as np
 import tensorflow as tf
 
+from utils.my_typing import String
+
 
 class DatasetPart(Enum):
     TRAIN = enum.auto()
@@ -11,7 +13,7 @@ class DatasetPart(Enum):
     TEST = enum.auto()
 
 
-class Dataset:
+class Dataset(String):
     def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor], string: str):
         self.shape = shape
         self.X = X

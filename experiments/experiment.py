@@ -385,7 +385,7 @@ class Experiment:
 
     def get_and_create_directory(self, directory: str | None) -> str:
         if directory is None:
-            directory = os.path.join(_OUT, str(self.dataset), str(self.cat), self.network.string + "b" + str(self.batch_size))
+            directory = os.path.join(_OUT, self.dataset.string, str(self.cat), self.network.string + "b" + str(self.batch_size))
 
         if os.path.exists(directory):
             if input(f"Directory `{directory}` already exists, do you want to continue? y/n") != "y":
