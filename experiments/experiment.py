@@ -14,7 +14,6 @@ from datasets.dataset import Dataset, CategoricalDataset
 from datasets.mnist import MnistDataset
 from datasets import rebelo, rebelo2
 
-from generators.generator import Generator, CategoricalGenerator
 from generators.basicGAN import GAN
 from generators.categoricalGAN import GAN as CGAN
 from generators.basicVAE import VAE
@@ -23,10 +22,11 @@ from generators.basicAAE import AAE
 from generators.categoricalAAE import AAE as CAAE
 
 
-from parts.generator import generator
-from parts.encoder import encoder_to_normal
-from parts.discriminator import discriminator
-from parts.cat_discriminator import discriminator as cat_discriminator
+from parts.decoder import Decoder
+from parts.encoder import Encoder2Normal
+from parts.discriminator import Discriminator
+from parts.cat_discriminator import CatDiscriminator
+from utils.my_typing import String
 
 DEFAULT_SEED = 42
 DEFAULT_THREADS = 3
@@ -136,8 +136,8 @@ class Experiment:
     latent_shape: tuple[int, ...]
     dataset: Dataset | None
     dataset_generator: Callable[[int], Dataset] | None
-    network: Generator | CategoricalGenerator | None
-    network_generator: Callable[[Dataset], Generator] | None
+    network: tf.keras.Model | String | None
+    network_generator: Callable[[Dataset], Decoder] | None
     multiply_of: int | None
 
     def __init__(
@@ -145,8 +145,8 @@ class Experiment:
             cat: CategoryStyle | None = None,
             dataset: Dataset | None = None,
             dataset_generator: Callable[[int], Dataset] | None = None,
-            network: Generator | CategoricalGenerator | None = None,
-            network_generator: Callable[[Dataset], Generator] | None = None,
+            network: tf.keras.Model | String | None = None,
+            network_generator: Callable[[Dataset], Decoder] | None = None,
             batch_size: int | None = None,
             epochs: int | None = None,
             directory: str | None = None,
@@ -229,7 +229,7 @@ class Experiment:
             visualizer = self.get_visualizer(n_of_images)
         self.visualizer = visualizer
 
-    def get_network_generator(self, args: Namespace) -> Callable[[Dataset], Generator]:
+    def get_network_generator(self, args: Namespace) -> Callable[[Dataset], Decoder]:
         hidden_layers = args.layers
         conv_layers = args.conv_layers
         stride = args.stride
@@ -242,108 +242,108 @@ class Experiment:
         match args.network:
             case "gan":
                 if self.cat == CategoryStyle.CATEGORICAL:
-                    def network_generator(dataset: CategoricalDataset) -> Generator:
+                    def network_generator(dataset: CategoricalDataset) -> Decoder:
                         return CGAN(
-                            generator(
+                            Decoder(
                                 (self.latent_shape[0] + dataset.n_of_categories,), dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
-                            cat_discriminator(
+                            CatDiscriminator(
                                 (dataset.shape, dataset.n_of_categories),
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
                             dataset.n_of_categories,
                         )
                 else:
-                    def network_generator(dataset: Dataset) -> Generator:
+                    def network_generator(dataset: Dataset) -> Decoder:
                         return GAN(
-                            generator(
+                            Decoder(
                                 self.latent_shape, dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
-                            discriminator(
+                            Discriminator(
                                 dataset.shape,
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
                         )
             case "vae":
                 if self.cat == CategoryStyle.CATEGORICAL:
-                    def network_generator(dataset: CategoricalDataset) -> Generator:
+                    def network_generator(dataset: CategoricalDataset) -> Decoder:
                         network = CVAE(
-                            encoder_to_normal(
+                            Encoder2Normal(
                                 dataset.shape, (self.latent_shape[0] + dataset.n_of_categories,),
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
-                            generator(
+                            Decoder(
                                 (self.latent_shape[0] + dataset.n_of_categories,), dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
                             dataset.n_of_categories,
                         )
                         network.compile(optimizer=tf.optimizers.Adam())
                         return network
                 else:
-                    def network_generator(dataset: Dataset) -> Generator:
+                    def network_generator(dataset: Dataset) -> Decoder:
                         network = VAE(
-                            encoder_to_normal(
+                            Encoder2Normal(
                                 dataset.shape, self.latent_shape,
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
-                            generator(
+                            Decoder(
                                 self.latent_shape, dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
                         )
                         network.compile(optimizer=tf.optimizers.Adam())
                         return network
             case "aae":
                 if self.cat == CategoryStyle.CATEGORICAL:
-                    def network_generator(dataset: CategoricalDataset) -> Generator:
+                    def network_generator(dataset: CategoricalDataset) -> Decoder:
                         network = CAAE(
-                            encoder_to_normal(
+                            Encoder2Normal(
                                 dataset.shape, self.latent_shape,
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
-                            generator(
+                            Decoder(
                                 self.latent_shape, dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
-                            discriminator(
+                            Discriminator(
                                 self.latent_shape,
                                 hidden_layers=args.dis_layers, conv_layers=args.dis_conv_layers,
-                                stride=args.dis_stride, kernel_size=args.dis_kernel_size,
+                                strides=args.dis_stride, kernel_sizes=args.dis_kernel_size,
                             ),
                             dataset.n_of_categories,
                         )
                         network.compile(optimizer=tf.optimizers.Adam())
                         return network
                 else:
-                    def network_generator(dataset: Dataset) -> Generator:
+                    def network_generator(dataset: Dataset) -> Decoder:
                         network = AAE(
-                            encoder_to_normal(
+                            Encoder2Normal(
                                 dataset.shape, self.latent_shape,
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
-                                stride=second_stride, kernel_size=second_kernel_size,
+                                strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
-                            generator(
+                            Decoder(
                                 self.latent_shape, dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
-                                stride=stride, kernel_size=kernel_size,
+                                strides=stride, kernel_sizes=kernel_size,
                             ),
-                            discriminator(
+                            Discriminator(
                                 self.latent_shape,
                                 hidden_layers=args.dis_layers, conv_layers=args.dis_conv_layers,
-                                stride=args.dis_stride, kernel_size=args.dis_kernel,
+                                strides=args.dis_stride, kernel_sizes=args.dis_kernel,
                             ),
                         )
                         network.compile(optimizer=tf.optimizers.Adam())

@@ -4,34 +4,29 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from parts.discriminator import Dis
-from parts.encoder import Enc
-from parts.generator import Gen
+from parts.discriminator import Discriminator
+from parts.decoder import Decoder
+from parts.encoder import Encoder2Normal
 
-from generators.generator import CategoricalGenerator
+from generators.generator import Generator
+from utils.my_typing import seq2str
 
 
-class AAE(CategoricalGenerator):
+class AAE(Generator):
     """ Adversarial auto encoder (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
         https://medium.com/vitrox-publication/adversarial-auto-encoder-aae-a3fc86f71758,
         https://arxiv.org/pdf/1511.05644.pdf.
     """
     def __init__(
             self,
-            encoder: Enc,
-            decoder: Gen,
-            discriminator: Dis,
+            encoder: Encoder2Normal,
+            decoder: Decoder,
+            discriminator: Discriminator,
             n_of_categories: int,
             seed: int = 42,
             latent_prior=None,
-            string: str | None = None,
     ) -> None:
         super().__init__()
-
-        if string is None:
-            string = f"aae_l{encoder.outputs[0].shape[1:]}e{encoder.string}d{decoder.string}di{discriminator.string}"
-
-        self.string = string
 
         self._seed = seed
         self.latent_shape = encoder.outputs[0].shape[1:]
@@ -112,10 +107,17 @@ class AAE(CategoricalGenerator):
         self.encoder.save(path + "e.h5")
         self.decoder.save(path + "d.h5")
         self.discriminator.save(path + "dis.h5")
+        tf.io.write_file(path + "n.txt", str(self.n_of_categories))
 
     @staticmethod
-    def load_all(path: str, string: str, n_of_categories: int, latent_prior=None):  # -> AAE
-        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Part': Enc})
-        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Gen})
-        discriminator = tf.keras.models.load_model(path + "dis.h5", custom_objects={'Part': Dis})
-        return AAE(encoder, decoder, discriminator, n_of_categories, latent_prior=latent_prior, string=string)
+    def load_all(path: str, latent_prior=None) -> "AAE":
+        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Encoder2Normal': Encoder2Normal})
+        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Decoder': Decoder})
+        discriminator = tf.keras.models.load_model(path + "dis.h5", custom_objects={'Discriminator': Discriminator})
+        with open(path + "n.txt", "tr") as file:
+            n_of_categories = int(file.read())
+        return AAE(encoder, decoder, discriminator, n_of_categories, latent_prior=latent_prior)
+
+    @property
+    def string(self):
+        return f"aae_l{seq2str(self.latent_shape)};e({self.encoder.string});d({self.decoder.string});di({self.discriminator.string})"

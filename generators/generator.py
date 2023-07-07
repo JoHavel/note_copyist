@@ -1,14 +1,14 @@
 import abc
 
 import tensorflow as tf
+import tensorflow_probability as tfp
+
+from utils.my_typing import String
 
 
-class Generator(tf.keras.Model, abc.ABC):
+class Generator(tf.keras.Model, String, abc.ABC):
     latent_shape: tuple[int]
-    string: str
-
-    def __str__(self) -> str:
-        return self.string
+    latent_prior: tfp.distributions.Distribution
 
     @abc.abstractmethod
     def save_all(self, path):
@@ -16,14 +16,6 @@ class Generator(tf.keras.Model, abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def load_all(path: str, string: str, **kwargs) -> "Generator":
+    def load_all(path: str, latent_prior: tfp.distributions.Distribution | None) -> "Generator":
         ...
 
-
-class CategoricalGenerator(Generator, abc.ABC):
-    n_of_categories: int
-
-    @staticmethod
-    @abc.abstractmethod
-    def load_all(path: str, string: str, n_of_categories: int, **kwargs) -> "CategoricalGenerator":
-        ...

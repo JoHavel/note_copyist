@@ -4,24 +4,24 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from parts.cat_discriminator import CDis
-from parts.generator import Gen
+from parts.cat_discriminator import CatDiscriminator
+from parts.decoder import Decoder
 
-from generators.generator import CategoricalGenerator
+from generators.generator import Generator
+from utils.my_typing import seq2str
 
 
-class GAN(CategoricalGenerator):
+class GAN(Generator):
     """ Generative adversarial network (it learns generating images from one-hot labels concatenated with latent space "given" by latent_prior)
         https://ufal.mff.cuni.cz/courses/npfl114/2122-summer#12_deep_generative_models
     """
     def __init__(
             self,
-            generator: Gen,
-            discriminator: CDis,
+            generator: Decoder,
+            discriminator: CatDiscriminator,
             n_of_categories: int,
             seed: float = 42,
             latent_prior=None,
-            string: str | None = None,
     ) -> None:
         """
 
@@ -29,11 +29,6 @@ class GAN(CategoricalGenerator):
         :param discriminator: input in the shape of generator's output, outputs one number (in range [0, 1])
         """
         super().__init__()
-
-        if string is None:
-            string = f"gan_l{generator.outputs[0].shape[1:]}g{generator.string}d{discriminator.string}"
-
-        self.string = string
 
         self._seed = seed
         self.latent_shape = generator.inputs[0].shape[1:]
@@ -95,9 +90,16 @@ class GAN(CategoricalGenerator):
     def save_all(self, path):
         self.generator.save(path + "g.h5")
         self.discriminator.save(path + "d.h5")
+        tf.io.write_file(path + "n.txt", str(self.n_of_categories))
 
     @staticmethod
-    def load_all(path: str, string: str, n_of_categories: int, latent_prior=None):  # -> GAN
-        generator = tf.keras.models.load_model(path + "g.h5", custom_objects={'Part': Gen})
-        discriminator = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': CDis})
-        return GAN(generator, discriminator, n_of_categories, latent_prior=latent_prior, string=string)
+    def load_all(path: str, latent_prior=None) -> "GAN":
+        generator = tf.keras.models.load_model(path + "g.h5", custom_objects={'Decoder': Decoder})
+        discriminator = tf.keras.models.load_model(path + "d.h5", custom_objects={'CatDiscriminator': CatDiscriminator})
+        with open(path + "n.txt", "tr") as file:
+            n_of_categories = int(file.read())
+        return GAN(generator, discriminator, n_of_categories, latent_prior=latent_prior)
+
+    @property
+    def string(self):
+        return f"gan_l{seq2str(self.latent_shape)};g({self.generator.string});d({self.discriminator.string})"

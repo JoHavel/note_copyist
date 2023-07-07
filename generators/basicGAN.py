@@ -3,10 +3,11 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from parts.discriminator import Dis
-from parts.generator import Gen
+from parts.discriminator import Discriminator
+from parts.decoder import Decoder
 
 from generators.generator import Generator
+from utils.my_typing import seq2str
 
 
 class GAN(Generator):
@@ -15,11 +16,10 @@ class GAN(Generator):
     """
     def __init__(
             self,
-            generator: Gen,
-            discriminator: Dis,
+            generator: Decoder,
+            discriminator: Discriminator,
             seed: float = 42,
             latent_prior=None,
-            string: str | None = None,
     ) -> None:
         """
 
@@ -27,11 +27,6 @@ class GAN(Generator):
         :param discriminator: input in the shape of generator's output, outputs one number (in range [0, 1])
         """
         super().__init__()
-
-        if string is None:
-            string = f"gan_l{generator.inputs[0].shape[1:]}g{generator.string}d{discriminator.string}"
-
-        self.string = string
 
         self._seed = seed
         self.latent_shape = generator.inputs[0].shape[1:]
@@ -89,7 +84,11 @@ class GAN(Generator):
         self.discriminator.save(path + "d.h5")
 
     @staticmethod
-    def load_all(path: str, string: str, latent_prior=None):  # -> GAN
-        generator = tf.keras.models.load_model(path + "g.h5", custom_objects={'Part': Gen})
-        discriminator = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Dis})
-        return GAN(generator, discriminator, latent_prior=latent_prior, string=string)
+    def load_all(path: str, latent_prior=None) -> "GAN":
+        generator = tf.keras.models.load_model(path + "g.h5", custom_objects={'Decoder': Decoder})
+        discriminator = tf.keras.models.load_model(path + "d.h5", custom_objects={'Discriminator': Discriminator})
+        return GAN(generator, discriminator, latent_prior=latent_prior)
+
+    @property
+    def string(self):
+        return f"gan_l{seq2str(self.latent_shape)};g({self.generator.string});d({self.discriminator.string})"

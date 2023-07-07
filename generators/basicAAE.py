@@ -4,11 +4,13 @@
 
 import tensorflow as tf
 import tensorflow_probability as tfp
+
 from generators.generator import Generator
 
-from parts.discriminator import Dis
-from parts.encoder import Enc
-from parts.generator import Gen
+from parts.discriminator import Discriminator
+from parts.decoder import Decoder
+from parts.encoder import Encoder2Normal
+from utils.my_typing import seq2str
 
 
 class AAE(Generator):
@@ -18,19 +20,13 @@ class AAE(Generator):
     """
     def __init__(
             self,
-            encoder: Enc,
-            decoder: Gen,
-            discriminator: Dis,
+            encoder: Encoder2Normal,
+            decoder: Decoder,
+            discriminator: Discriminator,
             seed: int = 42,
             latent_prior=None,
-            string: str | None = None,
     ) -> None:
         super().__init__()
-
-        if string is None:
-            string = f"aae_l{decoder.inputs[0].shape[1:]}e{encoder.string}d{decoder.string}di{discriminator.string}"
-
-        self.string = string
 
         self._seed = seed
         self.latent_shape = decoder.inputs[0].shape[1:]
@@ -108,8 +104,12 @@ class AAE(Generator):
         self.discriminator.save(path + "dis.h5")
 
     @staticmethod
-    def load_all(path: str, string: str, latent_prior=None):  # -> AAE
-        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Part': Enc})
-        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Gen})
-        discriminator = tf.keras.models.load_model(path + "dis.h5", custom_objects={'Part': Dis})
-        return AAE(encoder, decoder, discriminator, latent_prior=latent_prior, string=string)
+    def load_all(path: str, latent_prior=None) -> "AAE":
+        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Encoder2Normal': Encoder2Normal})
+        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Decoder': Decoder})
+        discriminator = tf.keras.models.load_model(path + "dis.h5", custom_objects={'Discriminator': Discriminator})
+        return AAE(encoder, decoder, discriminator, latent_prior=latent_prior)
+
+    @property
+    def string(self):
+        return f"aae_l{seq2str(self.latent_shape)};e({self.encoder.string});d({self.decoder.string});di({self.discriminator.string})"

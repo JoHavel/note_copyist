@@ -3,30 +3,23 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from parts.encoder import Enc
-from parts.generator import Gen
+from parts.encoder import Encoder2Normal
+from parts.decoder import Decoder
+from utils.my_typing import String, seq2str
 
-from generators.generator import Generator
 
-
-class VAE(Generator):
+class VAE(tf.keras.Model, String):
     """ Variational auto encoder (it learns generating images from latent space "given" by latent_prior)
         https://ufal.mff.cuni.cz/courses/npfl114/2122-summer#12_deep_generative_models
     """
     def __init__(
             self,
-            encoder: Enc,
-            decoder: Gen,
+            encoder: Encoder2Normal,
+            decoder: Decoder,
             seed: int = 42,
             latent_prior=None,
-            string: str | None = None,
     ) -> None:
         super().__init__()
-
-        if string is None:
-            string = f"vae_l{decoder.inputs[0].shape[1:]}e{encoder.string}d{decoder.string}"
-
-        self.string = string
 
         self._seed = seed
         self.latent_shape = decoder.inputs[0].shape[1:]
@@ -78,7 +71,11 @@ class VAE(Generator):
         self.decoder.save(path + "d.h5")
 
     @staticmethod
-    def load_all(path: str, string: str, latent_prior=None):  # -> VAE
-        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Part': Enc})
-        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Part': Gen})
-        return VAE(encoder, decoder, latent_prior=latent_prior, string=string)
+    def load_all(path: str, latent_prior=None) -> "VAE":
+        encoder = tf.keras.models.load_model(path + "e.h5", custom_objects={'Encoder2Normal': Encoder2Normal})
+        decoder = tf.keras.models.load_model(path + "d.h5", custom_objects={'Decoder': Decoder})
+        return VAE(encoder, decoder, latent_prior=latent_prior)
+
+    @property
+    def string(self):
+        return f"vae_l{seq2str(self.latent_shape)};e({self.encoder.string});d({self.decoder.string})"
