@@ -20,12 +20,10 @@ class VAE(Generator):
             encoder: Encoder2Normal,
             decoder: Decoder,
             n_of_categories: int,
-            seed: int = 42,
             latent_prior=None,
     ) -> None:
         super().__init__()
 
-        self._seed = seed
         self.latent_shape = decoder.inputs[0].shape[1:]
 
         if latent_prior is None:
@@ -59,7 +57,7 @@ class VAE(Generator):
             distribution = tfp.distributions.Normal(mean[..., self.n_of_categories:], sd[..., self.n_of_categories:])
 
             # Decode images
-            latent_space = distribution.sample(seed=self._seed)
+            latent_space = distribution.sample()
             generated_images = self.decoder(tf.concat([categories, latent_space], axis=-1), training=True)
             reconstruction_loss = self.decoder.compiled_loss(images, generated_images)
 

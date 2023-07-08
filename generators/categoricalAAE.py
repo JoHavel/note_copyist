@@ -23,12 +23,10 @@ class AAE(Generator):
             decoder: Decoder,
             discriminator: Discriminator,
             n_of_categories: int,
-            seed: int = 42,
             latent_prior=None,
     ) -> None:
         super().__init__()
 
-        self._seed = seed
         self.latent_shape = encoder.outputs[0].shape[1:]
 
         if latent_prior is None:
@@ -52,7 +50,7 @@ class AAE(Generator):
             distribution = tfp.distributions.Normal(mean, sd)
 
             # Decode images
-            latent_space = distribution.sample(seed=self._seed)
+            latent_space = distribution.sample()
             generated_images = self.decoder(
                 tf.concat([tf.one_hot(labels, self.n_of_categories), latent_space], axis=-1),
                 training=True
@@ -77,7 +75,7 @@ class AAE(Generator):
 
         # Discriminator
         with tf.GradientTape() as tape:
-            discriminated_real = self.discriminator(tf.stack([self._latent_prior.sample() for _ in range(images.shape[0])]), training=True)  # FIXME seed=self._seed?
+            discriminated_real = self.discriminator(tf.stack([self._latent_prior.sample() for _ in range(images.shape[0])]), training=True)
             discriminated_fake = self.discriminator(latent_space, training=True)
             discriminator_loss = (
                     self.discriminator.compiled_loss(tf.ones_like(discriminated_real), discriminated_real) +

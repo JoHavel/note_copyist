@@ -18,7 +18,6 @@ class GAN(Generator):
             self,
             generator: Decoder,
             discriminator: Discriminator,
-            seed: float = 42,
             latent_prior=None,
     ) -> None:
         """
@@ -27,8 +26,6 @@ class GAN(Generator):
         :param discriminator: input in the shape of generator's output, outputs one number (in range [0, 1])
         """
         super().__init__()
-
-        self._seed = seed
         self.latent_shape = generator.inputs[0].shape[1:]
 
         if latent_prior is None:
@@ -44,7 +41,7 @@ class GAN(Generator):
     def train_step(self, items: tf.Tensor) -> dict[str, tf.Tensor]:
         # Generator
         with tf.GradientTape() as tape:
-            samples = self._latent_prior.sample(tf.shape(items)[0], seed=self._seed)
+            samples = self._latent_prior.sample(tf.shape(items)[0])
             gen = self.generator(samples, training=True)
             dis = self.discriminator(gen, training=True)
             generator_loss = self.discriminator.compiled_loss(tf.ones_like(dis), dis)

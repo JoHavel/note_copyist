@@ -20,7 +20,6 @@ class GAN(Generator):
             generator: Decoder,
             discriminator: CatDiscriminator,
             n_of_categories: int,
-            seed: float = 42,
             latent_prior=None,
     ) -> None:
         """
@@ -30,7 +29,6 @@ class GAN(Generator):
         """
         super().__init__()
 
-        self._seed = seed
         self.latent_shape = generator.inputs[0].shape[1:]
 
         if latent_prior is None:
@@ -51,7 +49,7 @@ class GAN(Generator):
         with tf.GradientTape() as tape:
             samples = tf.concat([
                 categories,
-                self._latent_prior.sample(tf.shape(items)[0], seed=self._seed)[..., self.n_of_categories:]
+                self._latent_prior.sample(tf.shape(items)[0])[..., self.n_of_categories:]
             ], axis=-1)
             gen = self.generator(samples, training=True)
             dis = self.discriminator((gen, categories), training=True)

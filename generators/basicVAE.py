@@ -16,12 +16,10 @@ class VAE(tf.keras.Model, String):
             self,
             encoder: Encoder2Normal,
             decoder: Decoder,
-            seed: int = 42,
             latent_prior=None,
     ) -> None:
         super().__init__()
 
-        self._seed = seed
         self.latent_shape = decoder.inputs[0].shape[1:]
 
         if latent_prior is None:
@@ -41,7 +39,7 @@ class VAE(tf.keras.Model, String):
             distribution = tfp.distributions.Normal(mean, sd)
 
             # Decode images
-            latent_space = distribution.sample(seed=self._seed)
+            latent_space = distribution.sample()
             generated_images = self.decoder(latent_space, training=True)
             reconstruction_loss = self.decoder.compiled_loss(images, generated_images)
 
