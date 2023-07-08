@@ -87,9 +87,6 @@ class Downsample(tf.keras.Model, String):
             last_layer = tf.keras.layers.BatchNormalization()(last_layer)
             last_layer = tf.keras.layers.Activation(activation=self._hidden_activation)(last_layer)
 
-        if len(self._input_shape) == 2:
-            last_layer = last_layer[..., 0]
-
         return last_layer
 
     def _fully_connected(self, last_layer: tf.Module) -> tf.Module:
