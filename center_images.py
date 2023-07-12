@@ -1,3 +1,4 @@
+from collections.abc import Callable
 import cv2
 import argparse
 import os
@@ -281,18 +282,18 @@ def whole_note_from_half(
     return image[bb[0]:bb[2], bb[1]:bb[3]]
 
 
-
-
-
-
-def center_image(input_dirs: list[str], output_dir: str):
+def center_images(
+        input_dirs: list[str],
+        output_dir: str,
+        center_image: Callable[[np.ndarray], np.ndarray | None]
+):
     os.makedirs(output_dir, exist_ok=True)
 
     for i, input_dir in enumerate(input_dirs):
         for file in os.listdir(input_dir):
             filename = os.path.join(input_dir, file)
             image = cv2.imread(filename, flags=cv2.IMREAD_GRAYSCALE)
-            image = center_f_clef(image)
+            image = center_image(image)
             if image is None:
                 print("skipping: " + filename, file=sys.stderr)
                 continue
@@ -306,4 +307,4 @@ if __name__ == '__main__':
     parser.add_argument("output_dir")
     # parser.add_argument("type", type=SymbolType)
     args = parser.parse_args()
-    center_image(args.input_dirs, args.output_dir)
+    center_images(args.input_dirs, args.output_dir, center_f_clef)  # FIXME

@@ -12,7 +12,7 @@ from utils.faster_visualizers import gs_img_2d_ls_visualizer, gs_img_3d_ls_visua
 
 from datasets.dataset import Dataset, CategoricalDataset
 from datasets.mnist import MnistDataset
-from datasets import rebelo, rebelo2
+from datasets import rebelo, rebelo2, centered_rebelo
 
 from generators.basicGAN import GAN
 from generators.categoricalGAN import GAN as CGAN
@@ -65,12 +65,14 @@ _DATASETS = {
     "mnist": MnistDataset,
     "rebelo1": rebelo.RebeloDataset,
     "rebelo2": rebelo2.RebeloDataset,
+    "crebelo": centered_rebelo.CenteredRebeloDataset,
     "other": lambda **kwargs: DirDataset(image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
 }
 _DATASETS_ONECAT = {
     "mnist": lambda category, **kwargs: MnistDataset(**kwargs).one_category(category),
     "rebelo1": lambda category, **kwargs: rebelo.RebeloDataset(**kwargs).one_category(category),
     "rebelo2": lambda category, **kwargs: rebelo2.RebeloDataset(category=category, **kwargs),
+    "crebelo": centered_rebelo.CenteredRebeloDataset,
     "other": lambda category, **kwargs: DirDataset(category=category, image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
 }
 
