@@ -21,11 +21,11 @@ class DirDataset(CategoricalDataset):
             create=lambda *args: (),
             category: str | int | None = None,
     ):
-        if not all([os.path.exists(dirr) for dirr in image_dirs]):
-            create()
-
         if isinstance(image_dirs, str):
             image_dirs = [image_dirs]
+
+        if not all([os.path.exists(dirr) for dirr in image_dirs]):
+            create()
 
         if isinstance(exclude, str):
             exclude = [exclude]
