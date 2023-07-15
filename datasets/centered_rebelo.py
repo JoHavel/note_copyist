@@ -14,26 +14,26 @@ FUNCTIONS = {
     "sharp": center_sharp,
     "flat": center_flat,
     "natural": center_natural,
-    "g_clef": center_g_clef,
-    "f_clef": center_f_clef,
-    "c_clef": center_c_clef,
-    "half_note": center_half_note,
-    "quarter_note": center_quarter_note,
+    "g-clef": center_g_clef,
+    "f-clef": center_f_clef,
+    "c-clef": center_c_clef,
+    "half-note": center_half_note,
+    "quarter-note": center_quarter_note,
     # "eighth_note": center_eighth_note,
-    "quarter_rest": center_quarter_rest,
+    "quarter-rest": center_quarter_rest,
 }
 
 REBELO_NAMES = {
     "sharp": "sharps",
     "flat": "flat",
     "natural": "naturals",
-    "g_clef": "trebleClef",
-    "f_clef": "bassClef",
-    "c_clef": "altoClef",
-    "half_note": "notesOpen",
-    "quarter_note": "notes",
+    "g-clef": "trebleClef",
+    "f-clef": "bassClef",
+    "c-clef": "altoClef",
+    "half-note": "notesOpen",
+    "quarter-note": "notes",
     # "eighth_note": "notesFlags",
-    "quarter_rest": "rests1",
+    "quarter-rest": "rests1",
 }
 
 
@@ -55,10 +55,10 @@ def create_centered_rebelo(image_dirs: list[str] | str, output_dir: str):
         center_images(dirs, symbol_output_dir, FUNCTIONS[symbol])
 
 
-    symbol = "whole_note"
+    symbol = "whole-note"
     symbol_output_dir = os.path.join(output_dir, symbol)
     os.mkdir(symbol_output_dir)
-    dirs = list(filter(os.path.exists, [os.path.join(dirr, REBELO_NAMES["half_note"]) for dirr in image_dirs]))
+    dirs = list(filter(os.path.exists, [os.path.join(dirr, REBELO_NAMES["half-note"]) for dirr in image_dirs]))
     assert len(dirs) != 0
     center_images(dirs, symbol_output_dir, whole_note_from_half)
 
