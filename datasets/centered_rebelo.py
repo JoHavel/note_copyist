@@ -19,7 +19,8 @@ FUNCTIONS = {
     "c-clef": center_c_clef,
     "half-note": center_half_note,
     "quarter-note": center_quarter_note,
-    # "eighth_note": center_eighth_note,
+    "eighth-note-up": center_eighth_note_up,
+    "eighth-note-down": center_eighth_note_down,
     "quarter-rest": center_quarter_rest,
 }
 
@@ -32,7 +33,8 @@ REBELO_NAMES = {
     "c-clef": "altoClef",
     "half-note": "notesOpen",
     "quarter-note": "notes",
-    # "eighth_note": "notesFlags",
+    "eighth-note-up": "notesFlags",
+    "eighth-note-down": "notesFlags",
     "quarter-rest": "rests1",
 }
 

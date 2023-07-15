@@ -223,9 +223,50 @@ def center_quarter_note(
         component_center_x = image.shape[1] - component_center_x
 
     return center_image_to_point(image, component_center_x, component_center_y, pad_value=max_value)
-    
 
-center_eighth_note = center_quarter_note
+
+def center_eighth_note(
+        image: np.ndarray,
+        max_value: int = 255,
+        down: bool = True,
+        up: bool = True,
+) -> np.ndarray | None:
+    bb = bounding_box(max_value - image, max_value)
+    image = image[bb[0]:bb[2], bb[1]:bb[3]]
+    binary_image = image < max_value/2
+    binary_image = np.pad(binary_image, [[1, 1], [1, 1]], constant_values=False)
+    binary_image = binary_image.astype(np.uint8)
+
+    distances = cv2.distanceTransform(binary_image, cv2.DIST_C, cv2.DIST_MASK_3)
+    max_distance = np.max(distances)
+    binary_image = (distances >= max_distance - 1).astype(np.uint8)
+
+    ret, labels = cv2.connectedComponents(binary_image)
+    if ret != 2:
+        return None
+
+    component_center_x, component_center_y = get_center_of_component(labels)
+
+    if component_center_y < image.shape[0]//2:
+        if not down:
+            return None
+        image = image[::-1, ::-1]
+        component_center_y = image.shape[0] - component_center_y
+        component_center_x = image.shape[1] - component_center_x
+    else:
+        if not up:
+            return None
+
+    return center_image_to_point(image, component_center_x, component_center_y, pad_value=max_value)
+
+
+def center_eighth_note_up(image: np.ndarray, max_value: int = 255) -> np.ndarray | None:
+    return center_eighth_note(image, max_value, down=False, up=True)
+
+
+def center_eighth_note_down(image: np.ndarray, max_value: int = 255) -> np.ndarray | None:
+    return center_eighth_note(image, max_value, down=True, up=False)
+
 
 def center_half_note(
     image: np.ndarray,
