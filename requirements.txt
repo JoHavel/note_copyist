@@ -1,20 +1,22 @@
-tensorflow
-tensorflow-probability
+# python 3.11
 
-numpy
+tensorflow==2.12.0rc0
+tensorflow-probability==0.19.0
+
+numpy==1.24.2
 
 # Binarizers (and other non-tf image transformations)
-opencv-contrib-python
+opencv-contrib-python==4.7.0.72
 
 # Showing images
-matplotlib
+matplotlib==3.7.1
 
 # Loading datasets (size of images)
-imagesize
+imagesize==1.4.1
 
 # Downloading and extracting datasets
-requests
-py7zr
+requests==2.31.0
+py7zr==0.20.5
 
 # Command line arguments
-argparse
+argparse==1.4.0
