@@ -311,19 +311,19 @@ class Experiment:
                     def network_generator(dataset: CategoricalDataset) -> Decoder:
                         network = CAAE(
                             Encoder2Normal(
-                                dataset.shape, self.latent_shape,
+                                dataset.shape, (self.latent_shape[0] + dataset.n_of_categories,),
                                 hidden_layers=second_hidden_layers, conv_layers=second_conv_layers,
                                 strides=second_stride, kernel_sizes=second_kernel_size,
                             ),
                             Decoder(
-                                self.latent_shape, dataset.shape,
+                                (self.latent_shape[0] + dataset.n_of_categories,), dataset.shape,
                                 hidden_layers=hidden_layers, conv_layers=conv_layers,
                                 strides=stride, kernel_sizes=kernel_size,
                             ),
                             Discriminator(
                                 self.latent_shape,
                                 hidden_layers=args.dis_layers, conv_layers=args.dis_conv_layers,
-                                strides=args.dis_stride, kernel_sizes=args.dis_kernel_size,
+                                strides=args.dis_stride, kernel_sizes=args.dis_kernel,
                             ),
                             dataset.n_of_categories,
                         )
@@ -367,7 +367,7 @@ class Experiment:
                 @tf.function
                 def visualizer(filename, network) -> None:
                     cat_gs_img_nd_ls_visualizer(
-                        network, network.n_of_categories, self.latent_shape, n_of_images, filename
+                        network, network.n_of_categories, (self.latent_shape[0] + self.dataset.n_of_categories,), n_of_images, filename
                     )
         else:
             if sum(self.latent_shape) == 2:

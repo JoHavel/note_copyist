@@ -30,7 +30,10 @@ class AAE(Generator):
         self.latent_shape = encoder.outputs[0].shape[1:]
 
         if latent_prior is None:
-            self._latent_prior = tfp.distributions.Normal(tf.zeros(self.latent_shape), tf.ones(self.latent_shape))
+            self._latent_prior = tfp.distributions.Normal(
+                tf.zeros((self.latent_shape[0] - n_of_categories)),
+                tf.ones((self.latent_shape[0] - n_of_categories))
+            )
         else:
             self._latent_prior = latent_prior
 
@@ -47,7 +50,16 @@ class AAE(Generator):
             outputs = self.encoder(images, training=True)
             mean = outputs["mean"]
             sd = outputs["sd"]
-            distribution = tfp.distributions.Normal(mean, sd)
+
+            # Categorical loss
+            categories = tf.one_hot(labels, self.n_of_categories)
+            categorical_loss = self.encoder.compiled_loss(
+                mean[..., 0:self.n_of_categories], categories
+            ) + self.encoder.compiled_loss(
+                sd[..., 0:self.n_of_categories], tf.zeros_like(sd[..., 0:self.n_of_categories], dtype=tf.float32)
+            )
+
+            distribution = tfp.distributions.Normal(mean[..., self.n_of_categories:], sd[..., self.n_of_categories:])
 
             # Decode images
             latent_space = distribution.sample()
@@ -64,6 +76,7 @@ class AAE(Generator):
             # Sum losses
             loss = (
                     # latent_loss * tf.cast(self.latent_shape, tf.float32) +
+                    categorical_loss +
                     reconstruction_loss * tf.cast(tf.reduce_prod(tf.shape(images)[1:]), tf.float32) +
                     adversarial_loss
             )
@@ -94,6 +107,7 @@ class AAE(Generator):
         return {
             "reconstruction_loss": reconstruction_loss,
             "adversarial_loss": adversarial_loss,
+            "categorical_loss": categorical_loss,
             "loss": loss,
             # "discriminator_accuracy": self.discriminator.metrics[1].result(),
         }
