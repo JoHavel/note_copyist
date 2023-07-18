@@ -1,4 +1,4 @@
-# Copy of visualizers.py, optimized for tf (arguments must be tf.constants)
+""" Copy of `visualizers.py`, optimized for `tf` (arguments must be `tf.constant`s) """
 
 import tensorflow as tf
 import numpy as np
@@ -82,15 +82,16 @@ def cat_gs_img_nd_ls_visualizer(
         With one_hot categories in first dimensions (FIXME other than shapes [n])
     """
     for c in range(n_of_categories):
-        category = np.zeros((n_of_images**2, n_of_categories))
-        category[:, c] = 1
-
-        images = network(np.concatenate([
-            category,
-            np.random.standard_normal((n_of_images**2, shape[0] - n_of_categories))
-        ], axis=1))
-
-        images = tf.reshape(images, (n_of_images, n_of_images,) + images.shape[1:])
+        images = []
+        category = np.zeros(n_of_categories)
+        category[c] = 1
+        for i in range(n_of_images):
+            images.append([])
+            for j in range(n_of_images):
+                images[-1].append(network(np.concatenate([
+                    category,
+                    np.random.standard_normal(shape[0] - n_of_categories)
+                ])[None])[0])
 
         _concat_and_save(images, (filename + "c" + str(c) + extension))
 
