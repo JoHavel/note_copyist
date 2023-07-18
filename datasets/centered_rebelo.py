@@ -38,6 +38,8 @@ REBELO_NAMES = {
     "quarter-rest": "rests1",
 }
 
+_MANUALLY_DELETED_IMAGES = [('eighth-note-down', 'd0symbol3517.png'), ('eighth-note-down', 'd0symbol3851.png'), ('eighth-note-down', 'd0symbol3857.png'), ('eighth-note-down', 'd0symbol4353.png'), ('eighth-note-down', 'd0symbol4354.png'), ('eighth-note-down', 'd0symbol4368.png'), ('eighth-note-down', 'd0symbol4501.png'), ('eighth-note-down', 'd0symbol8241.png'), ('eighth-note-down', 'd1symbol10084.png'), ('eighth-note-down', 'd1symbol10567.png'), ('eighth-note-down', 'd1symbol115308.png'), ('eighth-note-down', 'd1symbol115808.png'), ('eighth-note-down', 'd1symbol116314.png'), ('eighth-note-down', 'd1symbol116823.png'), ('eighth-note-down', 'd1symbol117327.png'), ('eighth-note-down', 'd1symbol11980.png'), ('eighth-note-down', 'd1symbol119827.png'), ('eighth-note-down', 'd1symbol120326.png'), ('eighth-note-up', 'd1symbol10054.png'), ('eighth-note-up', 'd1symbol102.png'), ('eighth-note-up', 'd1symbol13281.png')]
+
 
 def create_centered_rebelo(image_dirs: list[str] | str, output_dir: str):
     from sys import stderr
@@ -63,6 +65,10 @@ def create_centered_rebelo(image_dirs: list[str] | str, output_dir: str):
     dirs = list(filter(os.path.exists, [os.path.join(dirr, REBELO_NAMES["half-note"]) for dirr in image_dirs]))
     assert len(dirs) != 0
     center_images(dirs, symbol_output_dir, whole_note_from_half)
+
+
+    for symbol, image in _MANUALLY_DELETED_IMAGES:
+        os.remove(os.path.join(output_dir, symbol, image))
 
     print("Rebelo dataset centered.", file=stderr)
 
