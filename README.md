@@ -26,7 +26,7 @@ It trains the desired generative NN and creates a deep directory tree in the dir
 out. The deepest directories are images, where previews for each epoch and category
 are stored, and parts where the models are saved.[^1]
 
-[^1]: The models can be loaded in Python by generators.***.***.load_all(filename).
+[^1]: The models can be loaded in Python by generators.\*\*\*.\*\*\*.load_all(filename).
 
 Then we can generate the images (and text files with the positions of the uncropped
 images’ centers) by running:
