@@ -1,20 +1,28 @@
 import os
 
+from datasets.dataset import _DOWNLOADED
 from datasets.dirdataset import DirDataset
 
 _SHAPE = (20, 20)
+""" The original shape of Rebelo dataset images """
 
 _URL = "https://github.com/apacha/OMR-Datasets/releases/download/datasets/Rebelo.Dataset.zip"
-_DOWNLOADED = "./downloaded"
+""" The URL from where download the Rebelo dataset """
 _ZIP_FILE = os.path.join(_DOWNLOADED, "rebelo.zip")
+""" Where store downloaded .zip file of the Rebelo dataset."""
 _DATASET = os.path.join(_DOWNLOADED, "Rebelo Dataset")
+""" Directory for the Rebelo dataset data """
 _7ZIP_FILES = [os.path.join(_DATASET, "database1.7z"), os.path.join(_DATASET, "database2.7z"), os.path.join(_DATASET, "database3.7z")]
+""" Where store unzipped (from .zip) files """
 _DEFAULT_DIR = os.path.join(_DATASET, "MainClasses")
+""" Default directory for the first Rebelo dataset """
 
 _STRING = "rebelo1"
+""" String for RebeloDataset (for naming directories for models) """
 
 
 def download_rebelo():
+    """ Downloads the Rebelo dataset """
     from sys import stderr
     from requests import get
     from zipfile import ZipFile
@@ -46,10 +54,19 @@ def download_rebelo():
 def RebeloDataset(
         image_dir: str = _DEFAULT_DIR,
         multiply_of: int | None = None,
+        category: str | int = None,
 ):
+    """
+        ``Class'' encapsulating the first (squared) Rebelo dataset.
+        It loads it from `image_dir` with image sizes divisible by `multiply_of`.
+        Loads only `category` (None |-> all).
+    """
     if multiply_of is not None:
-        return DirDataset(image_dirs=image_dir, multiply_of=multiply_of, shape=_SHAPE, create=download_rebelo, string=_STRING)
-    return DirDataset(image_dirs=image_dir, create=download_rebelo, string=_STRING)
+        return DirDataset(
+            image_dirs=image_dir, multiply_of=multiply_of, category=category,
+            shape=_SHAPE, create=download_rebelo, string=_STRING,
+        )
+    return DirDataset(image_dirs=image_dir, create=download_rebelo, category=category, string=_STRING)
 
 # Counts
 # Accent 458

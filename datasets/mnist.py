@@ -4,9 +4,17 @@ from keras.datasets import mnist
 from datasets.dataset import CategoricalDataset, DatasetPart
 
 _WIDTH = 28
+""" One dimension of MNIST dataset image """
+
 
 class MnistDataset(CategoricalDataset):
+    """ Class encapsulating MNIST dataset """
+
     def __init__(self, train_len: int = 50000, multiply_of: int | None = None):
+        """
+            Gets MNIST dataset, where there is `train_len` of train data, the rest is validation.
+            All images have dimensions divisible by `multiply_of`.
+        """
         (X_train, y_train), (X_test, y_test) = mnist.load_data()
         target_width = _WIDTH
         if multiply_of is not None:

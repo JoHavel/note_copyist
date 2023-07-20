@@ -7,6 +7,7 @@ import os
 from argparse import ArgumentParser, Namespace
 
 from datasets.dirdataset import DirDataset
+from generators.generator import Generator
 from utils.faster_visualizers import gs_img_2d_ls_visualizer, gs_img_3d_ls_visualizer, gs_img_nd_ls_visualizer, \
     cat_gs_img_2d_ls_visualizer, cat_gs_img_nd_ls_visualizer
 
@@ -29,11 +30,15 @@ from parts.cat_discriminator import CatDiscriminator
 from utils.my_typing import String
 
 DEFAULT_SEED = 42
+""" The default random seed """
 DEFAULT_THREADS = 3
+""" The default number of threads to use. """
 DEFAULT_TF_CPP_MIN_LOG_LEVEL = 2
+""" The default TF logging level """
 
 
 def add_tensorflow_args(parser: ArgumentParser) -> None:
+    """ Adds tensorflow settings to `parser` """
     parser.add_argument("--seed", type=int, help="Seed for experiment", default=DEFAULT_SEED)
     parser.add_argument("--threads", type=int, help="Number of threads for experiment", default=DEFAULT_THREADS)
     parser.add_argument("--log_level", type=int, help="Log level of TensorFlow", choices=range(0, 4+1), default=DEFAULT_TF_CPP_MIN_LOG_LEVEL)
@@ -43,6 +48,7 @@ def set_tensorflow(
         seed: int = DEFAULT_SEED, threads: int = DEFAULT_THREADS, log_level: int = DEFAULT_TF_CPP_MIN_LOG_LEVEL,
         args: Namespace | None = None,
 ) -> None:
+    """ Sets tensorflow settings from `args` or particular settings """
     if args is not None:
         seed = args.seed
         threads = args.threads
@@ -56,9 +62,14 @@ def set_tensorflow(
 
 
 class CategoryStyle(StrEnum):
+    """ Type of processing categories """
+
     BASIC = "basic"
+    """ Without categories """
     CATEGORICAL = "cat"
+    """ Categorical """
     BASIC_FOR_EVERY_CAT = "onecat"
+    """ Individual model for every category """
 
 
 _DATASETS = {
@@ -68,6 +79,7 @@ _DATASETS = {
     "crebelo": centered_rebelo.CenteredRebeloDataset,
     "other": lambda **kwargs: DirDataset(image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
 }
+""" Possible datasets for experiments """
 _DATASETS_ONECAT = {
     "mnist": lambda category, **kwargs: MnistDataset(**kwargs).one_category(category),
     "rebelo1": lambda category, **kwargs: rebelo.RebeloDataset(**kwargs).one_category(category),
@@ -75,15 +87,22 @@ _DATASETS_ONECAT = {
     "crebelo": centered_rebelo.CenteredRebeloDataset,
     "other": lambda category, **kwargs: DirDataset(category=category, image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
 }
+""" Possible datasets providing particular categories for experiments """
 
 _OUT = "out"
+""" Where output directory tree """
 _IMAGE_DIR = "images"
+""" Deepest directory containing images """
 _MODEL_DIR = "parts"
+""" Deepest directory containing saved models """
 
 
 class Experiment:
+    """ Class allowing doing experiments with various settings """
+
     @staticmethod
     def add_network_args(parser: ArgumentParser) -> None:
+        """ Add `generators` parameters to `parser` """
         parser.add_argument("--network", type=str, help="Network type", default="vae",
                             choices=["gan", "vae", "aae"])
         parser.add_argument("--latent", default=[2], type=int, nargs="*",
@@ -114,6 +133,7 @@ class Experiment:
 
     @staticmethod
     def add_experiment_args(parser: ArgumentParser) -> None:
+        """ Add experiment parameters to `parser` """
         add_tensorflow_args(parser)
         parser.add_argument("--cat", type=CategoryStyle, help="What type of experiment use", default=CategoryStyle.CATEGORICAL,
                             choices=CategoryStyle.__members__.values())
@@ -231,7 +251,8 @@ class Experiment:
             visualizer = self.get_visualizer(n_of_images)
         self.visualizer = visualizer
 
-    def get_network_generator(self, args: Namespace) -> Callable[[Dataset], Decoder]:
+    def get_network_generator(self, args: Namespace) -> Callable[[Dataset], Generator]:
+        """ Returns creator of chosen `generators` """
         hidden_layers = args.layers
         conv_layers = args.conv_layers
         stride = args.stride
@@ -356,6 +377,7 @@ class Experiment:
         return network_generator
 
     def get_visualizer(self, n_of_images: int) -> Callable[[str, tf.keras.Model], None]:
+        """ Gets suitable visualizer """
         if self.cat == CategoryStyle.CATEGORICAL:
             if sum(self.latent_shape) == 2:
                 @tf.function
@@ -386,6 +408,7 @@ class Experiment:
         return visualizer
 
     def get_and_create_directory(self, directory: str | None) -> str:
+        """ Gets directory name from settings (if `directory` is None) and creates it """
         if directory is None:
             directory = os.path.join(_OUT, self.dataset.string, str(self.cat), self.network.string + "b" + str(self.batch_size))
 
@@ -398,6 +421,7 @@ class Experiment:
         return directory
 
     def run(self) -> None:
+        """ Runs experiment """
         def draw(i, _) -> None:
             self.network.save_all(
                 os.path.join(self.directory, _MODEL_DIR, f"e{i+1}{'' if self.category is None else f'c{self.category}'}")

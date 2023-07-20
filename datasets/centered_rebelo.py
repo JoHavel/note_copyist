@@ -1,12 +1,10 @@
 import os
 
 from datasets.dirdataset import DirDataset
-from datasets.rebelo import download_rebelo
+from datasets.rebelo import download_rebelo, _DOWNLOADED
 from datasets.rebelo2 import _rebelo_subdirs, _DEFAULT_DIR as _REB_DEFAULT_DIR
 from center_images import *
 
-_DOWNLOADED: str = "./downloaded"
-""" Directory for dataset data """
 _DEFAULT_DIR: str = os.path.join(_DOWNLOADED, "centered_rebelo")
 """ Directory where put files of CenteredRebeloDataset, if we not provide the other directory """
 

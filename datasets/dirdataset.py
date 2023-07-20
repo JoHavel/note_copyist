@@ -21,6 +21,14 @@ class DirDataset(CategoricalDataset):
             create=lambda *args: (),
             category: str | int | None = None,
     ):
+        """
+            Loads dataset from `image_dirs` except for `excluded`. It has `String` value `string`.
+            All data has `shape` if `shape` is `tuple` and is not `[0, 0]` (automatically finds surrounding shape to
+            multiplies of `multiply_of`), None means original shape. Images are `inverse`(d).
+
+            We can load only particular `category` or provide `create` function for creating dataset
+            if `image_dirs` are empty.
+        """
         if isinstance(image_dirs, str):
             image_dirs = [image_dirs]
 
@@ -73,6 +81,7 @@ class DirDataset(CategoricalDataset):
             exclude: list[str] | tuple[str] = (),
             inverse: bool = True,
     ) -> (tf.Tensor, tf.Tensor, [str]):
+        """ Loads dataset from `image_dirs` except for `exclude`. Images have `shape` and are `inverse`(d). """
 
         X: list[tf.Tensor] = []
         y: list[int] = []
@@ -97,6 +106,7 @@ class DirDataset(CategoricalDataset):
             shape: tuple[int, int] | tuple[int, int, int] | None = None,
             inverse: bool = True
     ) -> tf.Tensor:
+        """ Loads image from file `f`, pads it to `shape` and `inverse` black and white. """
         image = tf.io.read_file(f)
         image = tf.io.decode_png(image, 1 if shape is None or len(shape) == 2 else shape[2])
         image = tf.cast(image, tf.float32)/255
@@ -123,6 +133,10 @@ class DirDataset(CategoricalDataset):
             every_file=lambda *args: None,
             every_category=lambda *args: None,
     ) -> None:
+        """
+            Does `every_cathegory` on every directory and `every_file` on every file in it.
+            Lists all `image_dirs` except for `exclude`.
+        """
         listdirs = [set(os.listdir(dirr)) for dirr in image_dirs]
 
         for category in sorted(set(reduce(lambda a, b: a.union(b), listdirs))):
@@ -146,6 +160,7 @@ class DirDataset(CategoricalDataset):
             image_dirs: list[str],
             exclude: list[str] | tuple[str] = (),
     ) -> (int, int):
+        """ Finds rectangle containing all images in `image_dirs` except for `exclude` dirs. """
         x = 0
         y = 0
 

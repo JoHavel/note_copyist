@@ -6,16 +6,21 @@ from datasets.dirdataset import DirDataset
 from datasets.rebelo import _DATASET, download_rebelo
 
 #         min    3^3    2^3
-_XSHAPE = 250  # 270  # 256
-_YSHAPE = 625  # 648  # 632
+_YSHAPE = 250  # 270  # 256
+""" Default height containing all Rebelo images """
+_XSHAPE = 625  # 648  # 632
+""" Default width containing all Rebelo images """
 
 _EXCLUDE = ["references", "unknown", "imgs"]
+""" Excluded directories (it does not contain images of symbols / do not have label) """
 _DEFAULT_DIR = os.path.join(_DATASET, "database")
+""" Directory for the second Rebelo dataset data """
 
 _STRING = "rebelo2"
 
 
 def _rebelo_subdirs(image_dir: str) -> list[str]:
+    """ From the second Rebelo dataset `image_dir` gets the desired directories """
     return [os.path.join(image_dir, "real"), os.path.join(image_dir, "syn")]
 
 
@@ -24,10 +29,15 @@ def RebeloDataset(
         multiply_of: int | None = None,
         category: str | int = None,
 ):
+    """
+        ``Class'' encapsulating the second (original-sized) Rebelo dataset.
+        It loads it from `image_dir` with image sizes divisible by `multiply_of`.
+        Loads only `category` (None |-> all).
+    """
     return DirDataset(
         image_dirs=_rebelo_subdirs(image_dir),
         string=_STRING,
-        shape=(_XSHAPE, _YSHAPE) if category is None else (0, 0),
+        shape=(_YSHAPE, _XSHAPE) if category is None else (0, 0),
         exclude=_EXCLUDE,
         multiply_of=multiply_of,
         create=download_rebelo,
