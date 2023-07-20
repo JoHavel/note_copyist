@@ -43,3 +43,16 @@ python add_other_end_of_stem.py {output_dir}/half-note {output_dir}/quarter-note
 
 The other end of the stems works only for the normalized (crebelo) images.
 
+## Project structure
+- in [root directory](.), there are [`main.py`](main.py) (runs [`experiments/experiment.py`](experiments/experiment.py)) and self-contained scripts:
+  - [`add_other_end_of_stem.py`](add_other_end_of_stem.py) adds txt file with the coordinates of the end of the stem to already generated images
+  - [`center_images.py`](center_images.py) automatically centers images to its attachment point
+  - [`generate_images.py`](generate_images.py) generates images, currently only for crebelo
+- [`parts`](parts) implements parts of generative NN such as Downsample, Upsample, Decoder, Encoder, and Discriminator
+- [`generators`](generators) implements those generative NN
+- [`datasets`](datasets) adaptor between various datasets and [`experiments`](experiments)
+- [`utils`](utils) some utils for surrounding works (such as visualizers, binarizers, and typing)
+- [`experiments`](experiments) historically contained all experiments' code, however now contains only
+  [`experiments/experiment.py`](experiments/experiment.py) which implements way to run all various experiments through [`main.py`](main.py)
+- [`downloaded`](downloaded) is a directory for input (datasets' data)
+- [`out`](out) is a directory for output (images, models, ...)
