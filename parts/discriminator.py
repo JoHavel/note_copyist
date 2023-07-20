@@ -26,6 +26,17 @@ class Discriminator(tf.keras.Model, String):  # FIXME typing (Discriminator is n
 
             name: str = "Discriminator",
     ):
+        """
+            Creates discriminator with `hidden_layers` as units of dense layers (and one dense layer with 1 `units`),
+            `conv_layers` as channels of convolutional layers with `strides` and `kernel_sizes` (those are cyclically
+            repeated if shorten than `conv_layers`).
+
+            Hidden dense and convolutional layers use `hidden_activation` (the last layer uses `sigmoid` as activation
+            function).
+
+            Finally, in tf ecosystem this model has `name`, and it is optimized by Optimizer (None = Adam), using
+            binary-cross-entropy loss and binary-accuracy metric.
+        """
         self._downsample = Downsample(
             input_shape, hidden_layers, conv_layers, kernel_sizes, strides, hidden_activation,
             flat=True,

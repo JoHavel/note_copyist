@@ -30,6 +30,20 @@ class Encoder2Normal(tf.keras.Model, String):
 
             flat: bool = True
     ):
+        """
+            Creates encoder with `hidden_layers` as units of dense layers (and one dense layer with `output_shape[-1]`
+            `units`), `conv_layers` as channels of convolutional layers with `strides` and `kernel_sizes` (those are
+            cyclically repeated if shorten than `conv_layers`).
+
+            It takes `input_shape` data and returns std and mean for normal distribution on `output_shape` space.
+
+            If `flat`, flattening is done before dense layers.
+
+            Hidden dense and convolutional layers use `hidden_activation`
+            (the std last layer uses `exponential` as activation function, the mean last layer is without it).
+
+            Finally, in tf ecosystem this model has `name`, and it uses MSE loss (this if for the categorical versions).
+        """
         self._downsample = Downsample(
             input_shape, hidden_layers, conv_layers, kernel_sizes, strides, hidden_activation, flat,
             input_after_conv_shape=None,

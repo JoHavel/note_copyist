@@ -17,6 +17,7 @@ from .categoricalAAE import AAE as CAAE
 
 
 class TestSavingAndLoadingGenerators(unittest.TestCase):
+    """ Tests if all subclasses of Generator can be saved and loaded by `save_all` and `load_all` """
     temp_dir: tempfile.TemporaryDirectory
 
     @classmethod
@@ -65,6 +66,7 @@ class TestSavingAndLoadingGenerators(unittest.TestCase):
 
 
 class TestString(unittest.TestCase):
+    """ Tests if all subclasses of String define the `string` attribute """
     def test_gan(self):
         gan = GAN(Decoder(1, [10, 10]), Discriminator([10, 10]))
         test_string(self, gan)

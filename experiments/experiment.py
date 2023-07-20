@@ -122,9 +122,9 @@ class Experiment:
         parser.add_argument("--batch", type=int, help="Batch size", default=50)
         parser.add_argument("--epochs", type=int, help="Number of training epochs", default=50)
         parser.add_argument("--multiply_of", type=int, help="If shape of image may be multiply of something (magnification of conv layers)", default=None)
-        parser.add_argument("--n_of_images", type=int, help="Number of images in image grid", default=10)
+        parser.add_argument("--n_of_images", type=int, help="Number of images in image grid in example images", default=10)
         parser.add_argument("--directory", type=str, help="Directory where save images and model", default=None)
-        parser.add_argument("--category", type=int, help="If cat != onecat", default=None)
+        parser.add_argument("--category", type=int, help="If cat == basic, here we can set specific category", default=None)
         Experiment.add_network_args(parser)
 
     cat: CategoryStyle

@@ -14,46 +14,59 @@ class DatasetPart(Enum):
 
 
 class Dataset(String):
+    """ Class representing a dataset which can be used in experiments """
+
     def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor], string: str):
-        self.shape = shape
-        self.X = X
-        self.y = y
-        self.string = string
+        self.shape: tuple[int, ...] = shape
+        """ The shape of one piece of data """
+
+        self.X: dict[DatasetPart, tf.Tensor] = X
+        """ Data of the dataset """
+
+        self.y: dict[DatasetPart, tf.Tensor] = y
+        """ Labels of `self.x` """
+
+        self.string: str = string
 
     @property
-    def X_train(self):
+    def X_train(self) -> tf.Tensor:
         return self.X[DatasetPart.TRAIN]
 
     @property
-    def X_val(self):
+    def X_val(self) -> tf.Tensor:
         return self.X[DatasetPart.VAL]
 
     @property
-    def X_test(self):
+    def X_test(self) -> tf.Tensor:
         return self.X[DatasetPart.TEST]
 
     @property
-    def y_train(self):
+    def y_train(self) -> tf.Tensor:
         return self.y[DatasetPart.TRAIN]
 
     @property
-    def y_val(self):
+    def y_val(self) -> tf.Tensor:
         return self.y[DatasetPart.VAL]
 
     @property
-    def y_test(self):
+    def y_test(self) -> tf.Tensor:
         return self.y[DatasetPart.TEST]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.string
 
 
 class DatasetModel(tf.keras.Model):
     """ tf.keras.Model returning images from dataset, always in the same ordering """
+
+    """  """
+
     def __init__(self, dataset: Dataset, part: DatasetPart = DatasetPart.TRAIN, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.i = 0
-        self._X = dataset.X[part]
+        self.i: int = 0
+        """ Index of the next data to generate """
+        self._X: tf.Tensor = dataset.X[part]
+        """ Data from which we generate """
 
     def __call__(self, *args, **kwargs):
         """ TODO len(shape) > 1 """
@@ -63,10 +76,13 @@ class DatasetModel(tf.keras.Model):
 
 
 class CategoricalDataset(Dataset):
+    """ Class representing a dataset with categories which can be used in experiments """
+
     def __init__(self, shape: tuple[int, ...], X: dict[DatasetPart, tf.Tensor], y: dict[DatasetPart, tf.Tensor], string: str,
                  n_of_categories: int):
         super().__init__(shape, X, y, string)
-        self.n_of_categories = n_of_categories
+        self.n_of_categories: int = n_of_categories
+        """ The number of categories in this dataset """
 
     def one_category(self, category: int) -> Dataset:
         X_new = {}

@@ -7,6 +7,7 @@ from parts.upsample import Upsample
 from utils.my_typing import IntSequenceOrInt, IntSequence, String, seq_or_int_2_seq
 
 _MAGIC_LIMIT = 4096
+""" Empiric chosen constant. In greater dimensional space, we should not use binary-cross-entropy """
 
 
 class Decoder(tf.keras.Model, String):
@@ -33,6 +34,18 @@ class Decoder(tf.keras.Model, String):
             loss: tf.keras.losses.Loss = None,
             output_activation: str | Callable = "sigmoid"
     ):
+        """
+            Creates decoder with `hidden_layers` as units of dense layers (and one dense layer with output_shape[-1]
+            `units`), `conv_layers` as channels of convolutional layers with `strides` and `kernel_sizes` (those are
+            cyclically repeated if shorten than `conv_layers`).
+
+            It takes point from `input_shape` space and returns data in `output_shape` space.
+
+            Hidden dense and convolutional layers use `hidden_activation` (the last layer uses output_activation).
+
+            Finally, in tf ecosystem this model has `name`, and it is optimized by Optimizer (None = Adam), using
+            binary-cross-entropy or MSE loss (depending on `ouput_shape`>`_MAGIC_LIMIT`).
+        """
         self._upsample = Upsample(
             input_shape,
             output_shape if len(output_shape) != 2 else list(output_shape) + [1],

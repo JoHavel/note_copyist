@@ -11,6 +11,7 @@ from .cat_discriminator import CatDiscriminator
 
 
 class TestString(unittest.TestCase):
+    """ Tests if all subclasses of String define the `string` attribute """
     def test_downsample(self):
         downsample = Downsample(1)
         test_string(self, downsample)

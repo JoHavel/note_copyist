@@ -6,6 +6,10 @@ from itertools import cycle
 
 
 class Downsample(tf.keras.Model, String):
+    """
+        Layer encoding data from a high-dimensional space (for example, an image)
+        to a low-dimensional space (a latent space)
+    """
     _intput_shape: IntSequence
 
     _conv_layers: IntSequence
@@ -38,6 +42,19 @@ class Downsample(tf.keras.Model, String):
 
             name: str = "Downsample",
     ):
+        """
+            Uses `hidden_layers` as units of dense layers, `conv_layers` as channels of convolutional layers with
+            `strides` and `kernel_sizes` (those are cyclically repeated if shorten than `conv_layers`).
+            
+            If `flat`, flattening is done before dense layers.
+            
+            If `input_after_conv_shape` is provided it takes two inputs (`input_shape` and `input_after_conv_shape`)
+            and second it add to output of conv_layers (and possible flatten layer).
+
+            Dense and convolutional layers use `hidden_activation`.
+
+            Finally, in tf ecosystem this model has `name`.
+        """
         self._input_shape = seq_or_int_2_seq(input_shape)
         self._hidden_layers = hidden_layers
         self._conv_layers = conv_layers

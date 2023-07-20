@@ -9,6 +9,10 @@ from itertools import cycle
 
 
 class Upsample(tf.keras.Model, String):
+    """
+        Layer generating data from a low-dimensional (for example, a latent space)
+        to a high-dimensional space (an image)
+    """
     _intput_shape: IntSequence
     _output_shape: IntSequence
 
@@ -37,6 +41,17 @@ class Upsample(tf.keras.Model, String):
 
             name: str = "Downsample",
     ):
+        """
+            Uses `hidden_layers` as units of dense layers, `conv_layers` as channels of convolutional layers with
+            `strides` and `kernel_sizes` (those are cyclically repeated if shorten than `conv_layers`).
+
+            It doesn't have output_shape equal to `output_shape`, but when we add last_layer with next `strides` and
+            `kernel_size`, tha last layer's output shape is `output_shape`
+
+            Dense and convolutional layers use `hidden_activation`.
+
+            Finally, in tf ecosystem this model has `name`.
+        """
         self._input_shape = seq_or_int_2_seq(input_shape)
         self._output_shape = output_shape
         self._hidden_layers = hidden_layers
