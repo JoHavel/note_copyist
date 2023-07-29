@@ -11,7 +11,7 @@ _DEFAULT_DIR: str = os.path.join(_DOWNLOADED, "centered_rebelo")
 _STRING: str = "crebelo"
 """ String for CenteredRebeloDataset (for naming directories for models) """
 
-FUNCTIONS: dict[str, str] = {
+FUNCTIONS: dict[str, Callable[[np.ndarray], np.ndarray | None]] = {
     "sharp": center_sharp,
     "flat": center_flat,
     "natural": center_natural,
