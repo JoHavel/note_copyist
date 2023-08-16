@@ -1,0 +1,94 @@
+mkdir out/zips/
+
+# A
+python3.11 generate_images_for_mashcima.py out/for_mashcima/A_72 MUSCIMA --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/A_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/A_73 MUSCIMA --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/A_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/A_74 MUSCIMA --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/A_73; cd ../../
+
+# B
+python3.11 generate_images_for_mashcima.py out/for_mashcima/B_72 REBELO --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/B_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/B_73 REBELO --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/B_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/B_74 REBELO --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/B_74; cd ../../
+
+# C
+python3.11 generate_images_for_mashcima.py out/for_mashcima/C_72 MUSCIMA REBELO --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/C_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/C_73 MUSCIMA REBELO --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/C_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/C_74 MUSCIMA REBELO --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/C_74; cd ../../
+
+# rebelo models
+python3.11 main.py --seed 72 --directory out/models_for_mashcima/crebelo72 --dataset crebelo --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+python3.11 main.py --seed 73 --directory out/models_for_mashcima/crebelo73 --dataset crebelo --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+python3.11 main.py --seed 74 --directory out/models_for_mashcima/crebelo74 --dataset crebelo --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+
+# D
+python3.11 generate_images_for_mashcima.py out/for_mashcima/D_72 MUSCIMA out/models_for_mashcima/crebelo72/parts/e150 --network _ aae --cat _ onecat --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/D_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/D_73 MUSCIMA out/models_for_mashcima/crebelo73/parts/e150 --network _ aae --cat _ onecat --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/D_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/D_74 MUSCIMA out/models_for_mashcima/crebelo74/parts/e150 --network _ aae --cat _ onecat --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/D_74; cd ../../
+
+# F
+python3.11 generate_images_for_mashcima.py out/for_mashcima/F_72 out/models_for_mashcima/crebelo72/parts/e150 --network aae --cat onecat --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/F_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/F_73 out/models_for_mashcima/crebelo73/parts/e150 --network aae --cat onecat --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/F_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/F_74 out/models_for_mashcima/crebelo74/parts/e150 --network aae --cat onecat --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/F_74; cd ../../
+
+# MUSCIMA models
+python3.11 padd_muscima.py downloaded/other MUSCIMA --seed 72
+python3.11 main.py --seed 72 --directory out/models_for_mashcima/muscima72 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherM72
+python3.11 padd_muscima.py downloaded/other MUSCIMA --seed 73
+python3.11 main.py --seed 73 --directory out/models_for_mashcima/muscima73 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherM73
+python3.11 padd_muscima.py downloaded/other MUSCIMA --seed 74
+python3.11 main.py --seed 74 --directory out/models_for_mashcima/muscima74 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherM74
+
+# E
+python3.11 generate_images_for_mashcima.py out/for_mashcima/E_72 out/models_for_mashcima/muscima72/parts/e150 --network aae --cat onecat --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/E_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/E_73 out/models_for_mashcima/muscima73/parts/e150 --network aae --cat onecat --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/E_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/E_74 out/models_for_mashcima/muscima74/parts/e150 --network aae --cat onecat --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/E_74; cd ../../
+
+# H
+python3.11 generate_images_for_mashcima.py out/for_mashcima/H_72 out/models_for_mashcima/muscima72/parts/e150 REBELO --network aae --cat onecat --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/H_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/H_73 out/models_for_mashcima/muscima73/parts/e150 REBELO --network aae --cat onecat --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/H_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/H_74 out/models_for_mashcima/muscima74/parts/e150 REBELO --network aae --cat onecat --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/H_74; cd ../../
+
+# MUSCIMA models
+python3.11 padd_muscima.py downloaded/other MUSCIMA REBELO --seed 72
+python3.11 main.py --seed 72 --directory out/models_for_mashcima/mix72 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherMIX72
+python3.11 padd_muscima.py downloaded/other MUSCIMA REBELO --seed 73
+python3.11 main.py --seed 73 --directory out/models_for_mashcima/mix73 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherMIX73
+python3.11 padd_muscima.py downloaded/other MUSCIMA REBELO --seed 74
+python3.11 main.py --seed 74 --directory out/models_for_mashcima/mix74 --dataset other --cat onecat --layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27 --batch 5 --network aae --epoch 150 --latent 4
+mv downloaded/other downloaded/otherMIX74
+
+# G
+python3.11 generate_images_for_mashcima.py out/for_mashcima/G_72 out/models_for_mashcima/mix72/parts/e150 --network aae --cat onecat --seed 72
+cd out/zips/ && zip -r ../../out/for_mashcima/G_72; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/G_73 out/models_for_mashcima/mix73/parts/e150 --network aae --cat onecat --seed 73
+cd out/zips/ && zip -r ../../out/for_mashcima/G_73; cd ../../
+python3.11 generate_images_for_mashcima.py out/for_mashcima/G_74 out/models_for_mashcima/mix74/parts/e150 --network aae --cat onecat --seed 74
+cd out/zips/ && zip -r ../../out/for_mashcima/G_74; cd ../../
+
+cd out/zips/ && zip -r ../../out/for_mashcima/; cd ../../
