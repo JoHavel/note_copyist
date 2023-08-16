@@ -32,15 +32,16 @@ def one_step(model, img_filename: str, center_filename, category: tf.Tensor):
     out = model(inp)[0, ..., None]
     bb = bounding_box(out)
     im = 255 * out[bb[0]:bb[2], bb[1]:bb[3]]
-    image = tf.image.encode_png(tf.cast(im, tf.uint8))
-    tf.io.write_file(img_filename, image)
-    tf.io.write_file(
-        center_filename,
-        tf.strings.join([
-            tf.as_string(out.shape[1]//2 - bb[1]),
-            tf.as_string(out.shape[0]//2 - bb[0]),
-        ], separator=" ")
-    )
+    if tf.shape(im)[0] > 0 and tf.shape(im)[1] > 0:
+        image = tf.image.encode_png(tf.cast(im, tf.uint8))
+        tf.io.write_file(img_filename, image)
+        tf.io.write_file(
+            center_filename,
+            tf.strings.join([
+                tf.as_string(out.shape[1]//2 - bb[1]),
+                tf.as_string(out.shape[0]//2 - bb[0]),
+            ], separator=" ")
+        )
 
 
 def generate_images(

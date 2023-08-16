@@ -115,10 +115,10 @@ def generate(args, sources, networks, cats) -> None:
             else:
                 assert cat != "_" and network != "_"
                 if cat == "onecat":
-                    generate_images(source+"c"+str(i), _output_dir, _number, network)
+                    generate_images(source+"c"+str(i), _output_dir, _number, network, offset=offset)
                 else:
                     category_one_hot = tf.one_hot(i, len(N_OF_SYMBOLS_IN_MUSCIMA_PP))
-                    generate_images(source, _output_dir, _number, network, category_one_hot)
+                    generate_images(source, _output_dir, _number, network, category_one_hot, offset=offset)
 
             offset += _number
 
