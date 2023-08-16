@@ -30,7 +30,10 @@ def add_other_end_of_stems(directories: list[str]):
     for directory in directories:
         for file in filter(lambda it: it.endswith(".png"), os.listdir(directory)):
             file = os.path.join(directory, file)
-            one_step(tf.constant(file), tf.constant(file[:-4]+"-stem_head.txt"))
+            stem_file = file[:-4]+"-stem_head.txt"
+            if os.path.exists(stem_file):
+                continue
+            one_step(tf.constant(file), tf.constant(stem_file))
 
 
 if __name__ == '__main__':

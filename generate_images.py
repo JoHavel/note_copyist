@@ -16,13 +16,13 @@ CNETWORKS: dict[str, generators.generator.Generator] =\
 
 
 @tf.function
-def bounding_box(image) -> tuple[int, int, int, int]:
-    binary_image = tf.cast(image[..., 0] > 0.5, tf.int8)
+def bounding_box(image, half=0.5) -> tuple[int, int, int, int]:
+    binary_image = tf.cast(image[..., 0] > half, tf.int8)
     top = tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 1], [0, 0]], constant_values=1)))
     left = tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 0], [0, 1]], constant_values=1), axis=1))
     binary_image = tf.reverse(binary_image, (0, 1))
-    bottom = image.shape[0] - tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 1], [0, 0]], constant_values=1)))
-    right = image.shape[1] - tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 0], [0, 1]], constant_values=1), axis=1))
+    bottom = tf.shape(image, out_type=tf.int64)[0] - tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 1], [0, 0]], constant_values=1)))
+    right = tf.shape(image, out_type=tf.int64)[1] - tf.reduce_min(tf.argmax(tf.pad(binary_image, [[0, 0], [0, 1]], constant_values=1), axis=1))
     return top, left, bottom, right
 
 
@@ -45,7 +45,7 @@ def one_step(model, img_filename: str, center_filename, category: tf.Tensor):
 
 def generate_images(
         input_file: str, output_dir: str, number: int, network: str,
-        category: tf.Tensor = None
+        category: tf.Tensor = None, offset: int = 0
 ):
     os.makedirs(output_dir, exist_ok=True)
     if category is None:
@@ -54,7 +54,7 @@ def generate_images(
     else:
         model = Binarize(CNETWORKS[network].load_all(input_file), 0.2)
 
-    for i in range(number):
+    for i in range(offset, offset + number):
         one_step(
             model,
             tf.constant(os.path.join(output_dir, f"im{i}.png")),
