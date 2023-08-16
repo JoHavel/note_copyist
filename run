@@ -6,7 +6,7 @@ zip -r out/zips/A_72.zip out/for_mashcima/A_72
 python3.11 generate_images_for_mashcima.py out/for_mashcima/A_73 MUSCIMA --seed 73
 zip -r out/zips/A_73.zip out/for_mashcima/A_73
 python3.11 generate_images_for_mashcima.py out/for_mashcima/A_74 MUSCIMA --seed 74
-zip -r out/zips/A_73.zip out/for_mashcima/A_74
+zip -r out/zips/A_74.zip out/for_mashcima/A_74
 
 # B
 python3.11 generate_images_for_mashcima.py out/for_mashcima/B_72 REBELO --seed 72
