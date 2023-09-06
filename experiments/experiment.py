@@ -135,10 +135,12 @@ class Experiment:
     def add_experiment_args(parser: ArgumentParser) -> None:
         """ Add experiment parameters to `parser` """
         add_tensorflow_args(parser)
+        parser.add_argument("-q", action="store_true", default=False)
         parser.add_argument("--cat", type=CategoryStyle, help="What type of experiment use", default=CategoryStyle.CATEGORICAL,
                             choices=CategoryStyle.__members__.values())
         parser.add_argument("--dataset", type=str, help="Dataset for experiment", default="mnist",
                             choices=_DATASETS.keys() | _DATASETS_ONECAT.keys())
+        parser.add_argument("--dataset_dir", type=str, help="Main directory of dataset", default=None)
         parser.add_argument("--batch", type=int, help="Batch size", default=50)
         parser.add_argument("--epochs", type=int, help="Number of training epochs", default=50)
         parser.add_argument("--multiply_of", type=int, help="If shape of image may be multiply of something (magnification of conv layers)", default=None)
@@ -157,16 +159,19 @@ class Experiment:
     category: int | None
     latent_shape: tuple[int, ...]
     dataset: Dataset | None
-    dataset_generator: Callable[[int], Dataset] | None
+    dataset_generator: Callable[[int, ...], Dataset] | None
     network: tf.keras.Model | String | None
     network_generator: Callable[[Dataset], Decoder] | None
     multiply_of: int | None
+    q: bool
+    dataset_dir: str | None
+    dataset_kwargs: dict[str, object]
 
     def __init__(
             self,
             cat: CategoryStyle | None = None,
             dataset: Dataset | None = None,
-            dataset_generator: Callable[[int], Dataset] | None = None,
+            dataset_generator: Callable[[int, ...], Dataset] | None = None,
             network: tf.keras.Model | String | None = None,
             network_generator: Callable[[Dataset], Decoder] | None = None,
             batch_size: int | None = None,
@@ -178,6 +183,8 @@ class Experiment:
             latent_shape: tuple[int, ...] | None = None,
             multiply_of: int | None = None,
             args: Namespace | None = None,
+            q: bool = False,
+            dataset_dir: str | None = None,
     ):
         # TODO check args
         if args is None:
@@ -185,6 +192,17 @@ class Experiment:
             self.add_experiment_args(parser)
             args = parser.parse_args()
             set_tensorflow(args=args)
+
+        q = q | args.q
+        self.q = q
+
+        if dataset_dir is None:
+            dataset_dir = args.dataset_dir
+        self.dataset_dir = dataset_dir
+
+        self.dataset_kwargs = dict()
+        if self.dataset_dir is not None:
+            self.dataset_kwargs["dataset_dirs"] = self.dataset_dir
 
         if cat is None:
             cat = args.cat
@@ -201,6 +219,8 @@ class Experiment:
         if multiply_of is None:
             multiply_of = args.multiply_of
         self.multiply_of = multiply_of
+        if self.multiply_of is not None:
+            self.dataset_kwargs["multiply_of"] = self.multiply_of
 
         if cat != CategoryStyle.BASIC_FOR_EVERY_CAT:
             if category is None:
@@ -220,10 +240,7 @@ class Experiment:
         self.dataset_generator = dataset_generator
 
         if dataset is None:
-            if self.multiply_of is None:
-                dataset = dataset_generator(self.category)
-            else:
-                dataset = dataset_generator(self.category, multiply_of=multiply_of)
+            dataset = dataset_generator(self.category, **self.dataset_kwargs)
         self.dataset = dataset
 
         if latent_shape is None:
@@ -412,7 +429,7 @@ class Experiment:
         if directory is None:
             directory = os.path.join(_OUT, self.dataset.string, str(self.cat), self.network.string + "b" + str(self.batch_size))
 
-        if os.path.exists(directory):
+        if os.path.exists(directory) and not self.q:
             if input(f"Directory `{directory}` already exists, do you want to continue? y/n") != "y":
                 raise ValueError(f"Directory `{directory}` already exists!")
 
@@ -423,6 +440,8 @@ class Experiment:
     def run(self) -> None:
         """ Runs experiment """
         def draw(i, _) -> None:
+            if self.q and i+1 != self.epochs:
+                return
             self.network.save_all(
                 os.path.join(self.directory, _MODEL_DIR, f"e{i+1}{'' if self.category is None else f'c{self.category}'}")
             )
@@ -453,10 +472,7 @@ class Experiment:
 
         if self.cat == CategoryStyle.BASIC_FOR_EVERY_CAT:
             self.category += 1
-            if self.multiply_of is None:
-                self.dataset = self.dataset_generator(self.category)
-            else:
-                self.dataset = self.dataset_generator(self.category, multiply_of=self.multiply_of)
+            self.dataset = self.dataset_generator(self.category, **self.dataset_kwargs)
 
             if len(self.dataset.X_train) == 0:
                 return
