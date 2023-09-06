@@ -52,21 +52,21 @@ def download_rebelo():
 
 
 def RebeloDataset(
-        image_dir: str = _DEFAULT_DIR,
+        image_dirs: str = _DEFAULT_DIR,
         multiply_of: int | None = None,
         category: str | int = None,
 ):
     """
         ``Class'' encapsulating the first (squared) Rebelo dataset.
-        It loads it from `image_dir` with image sizes divisible by `multiply_of`.
+        It loads it from `image_dirs` with image sizes divisible by `multiply_of`.
         Loads only `category` (None |-> all).
     """
     if multiply_of is not None:
         return DirDataset(
-            image_dirs=image_dir, multiply_of=multiply_of, category=category,
+            image_dirs=image_dirs, multiply_of=multiply_of, category=category,
             shape=_SHAPE, create=download_rebelo, string=_STRING,
         )
-    return DirDataset(image_dirs=image_dir, create=download_rebelo, category=category, string=_STRING)
+    return DirDataset(image_dirs=image_dirs, create=download_rebelo, category=category, string=_STRING)
 
 # Counts
 # Accent 458

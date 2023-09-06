@@ -25,17 +25,17 @@ def _rebelo_subdirs(image_dir: str) -> list[str]:
 
 
 def RebeloDataset(
-        image_dir: str = _DEFAULT_DIR,
+        image_dirs: str = _DEFAULT_DIR,
         multiply_of: int | None = None,
         category: str | int = None,
 ):
     """
         ``Class'' encapsulating the second (original-sized) Rebelo dataset.
-        It loads it from `image_dir` with image sizes divisible by `multiply_of`.
+        It loads it from `image_dirs` with image sizes divisible by `multiply_of`.
         Loads only `category` (None |-> all).
     """
     return DirDataset(
-        image_dirs=_rebelo_subdirs(image_dir),
+        image_dirs=_rebelo_subdirs(image_dirs),
         string=_STRING,
         shape=(_YSHAPE, _XSHAPE) if category is None else (0, 0),
         exclude=_EXCLUDE,

@@ -10,7 +10,7 @@ _WIDTH = 28
 class MnistDataset(CategoricalDataset):
     """ Class encapsulating MNIST dataset """
 
-    def __init__(self, train_len: int = 50000, multiply_of: int | None = None):
+    def __init__(self, train_len: int = 50000, multiply_of: int | None = None, image_dirs: str = None):
         """
             Gets MNIST dataset, where there is `train_len` of train data, the rest is validation.
             All images have dimensions divisible by `multiply_of`.

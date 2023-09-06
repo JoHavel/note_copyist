@@ -83,22 +83,22 @@ def create_centered_rebelo(image_dirs: list[str] | str, output_dir: str):
 
 def CenteredRebeloDataset(
         category: str | int = None,
-        image_dir: str = _DEFAULT_DIR,
+        image_dirs: str = _DEFAULT_DIR,
         multiply_of: int | None = None,
         rebelo_dir: str = _REB_DEFAULT_DIR
 ) -> DirDataset:
     """
         Dataset containing the automatically centered images of the Rebelo dataset. Those images are loaded
-        from `image_dir`, we only load `category` (if it is not None) and images are padded, so it has dimensions
+        from `image_dirs`, we only load `category` (if it is not None) and images are padded, so it has dimensions
         divisible by `multiply_of`.
 
-        If `image_dir` is empy we automatically center the images from the Rebelo dataset stored in `rebelo_dir`.
+        If `image_dirs` is empy we automatically center the images from the Rebelo dataset stored in `rebelo_dir`.
     """
     return DirDataset(
-        image_dirs=image_dir,
+        image_dirs=image_dirs,
         string=_STRING,
         shape=(0, 0),
         multiply_of=multiply_of,
-        create=lambda: create_centered_rebelo(_rebelo_subdirs(rebelo_dir), image_dir),
+        create=lambda: create_centered_rebelo(_rebelo_subdirs(rebelo_dir), image_dirs),
         category=category,
     )
