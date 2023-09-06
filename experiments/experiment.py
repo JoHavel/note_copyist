@@ -202,7 +202,7 @@ class Experiment:
 
         self.dataset_kwargs = dict()
         if self.dataset_dir is not None:
-            self.dataset_kwargs["dataset_dirs"] = self.dataset_dir
+            self.dataset_kwargs["image_dirs"] = self.dataset_dir
 
         if cat is None:
             cat = args.cat
