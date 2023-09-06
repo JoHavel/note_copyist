@@ -77,7 +77,7 @@ _DATASETS = {
     "rebelo1": rebelo.RebeloDataset,
     "rebelo2": rebelo2.RebeloDataset,
     "crebelo": centered_rebelo.CenteredRebeloDataset,
-    "other": lambda **kwargs: DirDataset(image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
+    "other": lambda image_dirs="downloaded/other/", **kwargs: DirDataset(image_dirs=image_dirs, string="other", shape=(0, 0), **kwargs),
 }
 """ Possible datasets for experiments """
 _DATASETS_ONECAT = {
@@ -85,7 +85,7 @@ _DATASETS_ONECAT = {
     "rebelo1": lambda category, **kwargs: rebelo.RebeloDataset(**kwargs).one_category(category),
     "rebelo2": lambda category, **kwargs: rebelo2.RebeloDataset(category=category, **kwargs),
     "crebelo": centered_rebelo.CenteredRebeloDataset,
-    "other": lambda category, **kwargs: DirDataset(category=category, image_dirs="downloaded/other/", string="other", shape=(0, 0), **kwargs),
+    "other": lambda category, image_dirs="downloaded/other/", **kwargs: DirDataset(image_dirs=image_dirs, category=category, string="other", shape=(0, 0), **kwargs),
 }
 """ Possible datasets providing particular categories for experiments """
 
