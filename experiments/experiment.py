@@ -233,10 +233,7 @@ class Experiment:
             if self.category is not None:
                 dataset_generator = _DATASETS_ONECAT[args.dataset]
             else:
-                if multiply_of is None:
-                    dataset = _DATASETS[args.dataset]()
-                else:
-                    dataset = _DATASETS[args.dataset](multiply_of=multiply_of)
+                dataset = _DATASETS[args.dataset](**self.dataset_kwargs)
         self.dataset_generator = dataset_generator
 
         if dataset is None:
