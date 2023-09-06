@@ -27,27 +27,30 @@ def bounding_box(image, half=0.5) -> tuple[int, int, int, int]:
 
 
 @tf.function
-def one_step(model, img_filename: str, center_filename, category: tf.Tensor):
+def one_step(model, img_filename: str, center_filename, category: tf.Tensor) -> bool:
     inp = tf.concat((category, model.model._latent_prior.sample()), -1)[None, ...]
     out = model(inp)[0, ..., None]
+    success = True
+    if tf.reduce_max(out) < 0.01 or tf.reduce_min(out) > 0.99:
+        return False
     bb = bounding_box(out)
     im = 255 * out[bb[0]:bb[2], bb[1]:bb[3]]
-    if tf.shape(im)[0] > 0 and tf.shape(im)[1] > 0:
-        image = tf.image.encode_png(tf.cast(im, tf.uint8))
-        tf.io.write_file(img_filename, image)
-        tf.io.write_file(
-            center_filename,
-            tf.strings.join([
-                tf.as_string(out.shape[1]//2 - bb[1]),
-                tf.as_string(out.shape[0]//2 - bb[0]),
-            ], separator=" ")
-        )
+    image = tf.image.encode_png(tf.cast(im, tf.uint8))
+    tf.io.write_file(img_filename, image)
+    tf.io.write_file(
+        center_filename,
+        tf.strings.join([
+            tf.as_string(out.shape[1]//2 - bb[1]),
+            tf.as_string(out.shape[0]//2 - bb[0]),
+        ], separator=" ")
+    )
+    return True
 
 
 def generate_images(
         input_file: str, output_dir: str, number: int, network: str,
         category: tf.Tensor = None, offset: int = 0
-):
+) -> int:
     os.makedirs(output_dir, exist_ok=True)
     if category is None:
         category = tf.constant(())
@@ -55,13 +58,16 @@ def generate_images(
     else:
         model = Binarize(CNETWORKS[network].load_all(input_file), 0.2)
 
+    broken = 0
     for i in range(offset, offset + number):
-        one_step(
+        if not one_step(
             model,
             tf.constant(os.path.join(output_dir, f"im{i}.png")),
             tf.constant(os.path.join(output_dir, f"im{i}.txt")),
             category
-        )
+        ):
+            broken += 1
+    return broken
 
 
 if __name__ == '__main__':

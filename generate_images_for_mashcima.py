@@ -2,6 +2,7 @@ import argparse
 import os
 import random
 import shutil
+import sys
 
 import tensorflow as tf
 
@@ -92,7 +93,8 @@ def muscima_pp(name: str, output_dir: str, number: int, offset: int) -> None:
             shutil.copy(files[i][:-4] + "-stem_head.txt", stem_file)  # Maybe % len(files)
 
 
-def generate(args, sources, networks, cats) -> None:
+def generate(args, sources, networks, cats) -> bool:
+    success = True
     for i, name in enumerate(sorted(list(N_OF_SYMBOLS_IN_MUSCIMA_PP))):
         number = N_OF_SYMBOLS_IN_MUSCIMA_PP[name]
 
@@ -115,10 +117,14 @@ def generate(args, sources, networks, cats) -> None:
             else:
                 assert cat != "_" and network != "_"
                 if cat == "onecat":
-                    generate_images(source+"c"+str(i), _output_dir, _number, network, offset=offset)
+                    broken = generate_images(source+"c"+str(i), _output_dir, _number, network, offset=offset)
                 else:
                     category_one_hot = tf.one_hot(i, len(N_OF_SYMBOLS_IN_MUSCIMA_PP))
-                    generate_images(source, _output_dir, _number, network, category_one_hot, offset=offset)
+                    broken = generate_images(source, _output_dir, _number, network, category_one_hot, offset=offset)
+                if broken > 0:
+                    print(f"{broken} images not generated!!!", file=sys.stderr)
+                    success = False
+
 
             offset += _number
 
@@ -126,6 +132,7 @@ def generate(args, sources, networks, cats) -> None:
             add_other_end_of_stems([_output_dir])
 
         print(f"Generating `{name}` done.")
+    return success
 
 
 if __name__ == '__main__':
@@ -145,5 +152,6 @@ if __name__ == '__main__':
     assert len(cats) <= len(sources)
     cats += ["_"]*(len(sources) - len(cats))
 
-    generate(args, sources, networks, cats)
+    if not generate(args, sources, networks, cats):
+        exit(1)
 
