@@ -8,7 +8,7 @@ EXPERIMENT=$2
 
 # comment for usage without running latent part
 if [ "$EXPERIMENT" == "E" ]; then
-  rm -r "$(EXPERIMENT_OUTPUT "$SEED" E)"
+  rm -r "$(EXPERIMENT_OUTPUT "$SEED" E)" || :
   cp -r "$(LATENT_OUTPUT "$SEED" "$FINAL_LATENT")" "$(EXPERIMENT_OUTPUT "$SEED" E)"
   exit 0
 fi
