@@ -42,9 +42,8 @@ function PREPARED_MIXED_DATASET {
 
 MODELS_DIR="out/models_for_mashcima"
 function model_file {
-  global EPOCH
-    local MODEL_DIR=$1
-    echo "${MODEL_DIR}/parts/e${EPOCH}"
+  local MODEL_DIR=$1
+  echo "${MODEL_DIR}/parts/e${EPOCH}"
 }
 function LATENT_MODEL_DIR {
   local SEED=$1
@@ -176,27 +175,37 @@ function generate_C {
 }
 function generate_D {
   local SEED=$1
+  local MODEL_DIR
+        MODEL_DIR="$(EXPERIMENT_MODEL_DIR "$SEED" REBELO)"
   # FIXME enquote path
-  generate "$SEED" "$(EXPERIMENT_MODEL_DIR "$SEED" REBELO) MUSCIMA" "$(EXPERIMENT_OUTPUT "$SEED" D)"
+  generate "$SEED" "$(model_file "$MODEL_DIR") MUSCIMA" "$(EXPERIMENT_OUTPUT "$SEED" D)"
 }
 function generate_E {
   local SEED=$1
+  local MODEL_DIR
+        MODEL_DIR="$(EXPERIMENT_MODEL_DIR "$SEED" MUSCIMA)"
   # FIXME enquote path
-  generate "$SEED" "$(EXPERIMENT_MODEL_DIR "$SEED" MUSCIMA)" "$(EXPERIMENT_OUTPUT "$SEED" E)"
+  generate "$SEED" "$(model_file "$MODEL_DIR")" "$(EXPERIMENT_OUTPUT "$SEED" E)"
 }
 function generate_F {
   local SEED=$1
+  local MODEL_DIR
+        MODEL_DIR="$(EXPERIMENT_MODEL_DIR "$SEED" REBELO)"
   # FIXME enquote path
-  generate "$SEED" "$(EXPERIMENT_MODEL_DIR "$SEED" REBELO)" "$(EXPERIMENT_OUTPUT "$SEED" F)"
+  generate "$SEED" "$(model_file "$MODEL_DIR")" "$(EXPERIMENT_OUTPUT "$SEED" F)"
 }
 function generate_G {
   local SEED=$1
+  local MODEL_DIR
+        MODEL_DIR="$(EXPERIMENT_MODEL_DIR "$SEED" MIX)"
   # FIXME enquote path
-  generate "$SEED" "$(EXPERIMENT_MODEL_DIR "$SEED" MIX)" "$(EXPERIMENT_OUTPUT "$SEED" G)"
+  generate "$SEED" "$(model_file "$MODEL_DIR")" "$(EXPERIMENT_OUTPUT "$SEED" G)"
 }
 function generate_H {
   local SEED=$1
+  local MODEL_DIR
+        MODEL_DIR="$(EXPERIMENT_MODEL_DIR "$SEED" MUSCIMA)"
   # FIXME enquote path
-  generate "$SEED" "$(EXPERIMENT_MODEL_DIR "$SEED" MUSCIMA) REBELO" "$(EXPERIMENT_OUTPUT "$SEED" H)"
+  generate "$SEED" "$(model_file "$MODEL_DIR") REBELO" "$(EXPERIMENT_OUTPUT "$SEED" H)"
 }
 ###############################################################################
