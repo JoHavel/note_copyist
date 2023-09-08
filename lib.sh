@@ -133,7 +133,7 @@ function generate {
   local INPUT=$2
   local OUTPUT_DIR=$3
   # HACK!!! with MUSCIMA or REBELO, script can still take --network and --cat (and ignore them)
-  $GENERATE_SCRIPT_WITH_ARGS --seed "$SEED" "$OUTPUT_DIR" "${INPUT[@]}"
+  $GENERATE_SCRIPT_WITH_ARGS --seed "$SEED" "$OUTPUT_DIR" $INPUT  # FIXME INPUT splitting
 }
 
 function generate_latent {
