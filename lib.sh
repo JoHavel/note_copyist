@@ -23,7 +23,7 @@ PREPARE_DATASET_SCRIPT="${PYTHON} padd_muscima.py"
 TRAIN_SCRIPT="${PYTHON} main.py"
 TRAIN_SCRIPT_WITH_ARGS="${TRAIN_SCRIPT} ${TRAIN_ARGS}"
 GENERATE_SCRIPT="${PYTHON} generate_images_for_mashcima.py"
-GENERATE_SCRIPT_WITH_ARGS="${GENERATE_SCRIPT} ${GENERATE_ARGS}"
+GENERATE_SCRIPT_WITH_ARGS="${GENERATE_SCRIPT} ${GENERATE_ARGS}"  # FIXME: next argument must starts with --
 ##############################################################################
 
 
@@ -133,7 +133,7 @@ function generate {
   local INPUT=$2
   local OUTPUT_DIR=$3
   # HACK!!! with MUSCIMA or REBELO, script can still take --network and --cat (and ignore them)
-  $GENERATE_SCRIPT_WITH_ARGS "$OUTPUT_DIR" "${INPUT[@]}" --seed "$SEED"
+  $GENERATE_SCRIPT_WITH_ARGS --seed "$SEED" "$OUTPUT_DIR" "${INPUT[@]}"
 }
 
 function generate_latent {
