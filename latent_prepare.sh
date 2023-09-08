@@ -1,7 +1,8 @@
-set -ueo pipefail
+. lib.sh
 
-mv downloaded/muscima-exported-symbols/eight-note-down downloaded/muscima-exported-symbols/eighth-note-down || :
-mv downloaded/muscima-exported-symbols/eight-note-up downloaded/muscima-exported-symbols/eighth-note-up || :
-
+# Arguments
 SEED=$1
-python3.11 padd_muscima.py downloaded/MUSCIMA$SEED MUSCIMA --seed $SEED
+
+# Body
+fix_typo
+prepare_muscima "$SEED"
