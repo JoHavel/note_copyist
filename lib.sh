@@ -42,6 +42,7 @@ function PREPARED_MIXED_DATASET {
 
 MODELS_DIR="out/models_for_mashcima"
 function model_file {
+  global EPOCH
     local MODEL_DIR=$1
     echo "${MODEL_DIR}/parts/e${EPOCH}"
 }
