@@ -158,7 +158,7 @@ function train_REBELO {
 }
 function train_MIX {
   local SEED=$1
-  train_other "$SEED" "$(PREPARED_MIX_DATASET "$SEED")" "$(EXPERIMENT_MODEL_DIR "$SEED" MIX)" "$FINAL_LATENT"
+  train_other "$SEED" "$(PREPARED_MIXED_DATASET "$SEED")" "$(EXPERIMENT_MODEL_DIR "$SEED" MIX)" "$FINAL_LATENT"
 }
 
 function generate_A {
