@@ -2,7 +2,7 @@
 
 set -ueo pipefail
 
-FINAL_LATENT=5
+FINAL_LATENT=10
 
 # Network #####################################################################
 EPOCH=150
