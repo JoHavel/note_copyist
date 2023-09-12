@@ -6,7 +6,7 @@ FINAL_LATENT=10
 
 # Network #####################################################################
 EPOCH=150
-BATCH=5
+BATCH=50
 NETWORK="aae"
 CONDITIONED="cat"
 NETWORK_ARGS="--layers --conv_layers 64 16 4 --stride 3 --kernel 5 --multiply_of 27"
