@@ -18,7 +18,7 @@ GENERATE_ARGS=" --cat $CONDITIONED --network $NETWORK"
 
 
 # Scripts #####################################################################
-PYTHON="python3.11"
+PYTHON="venv/bin/python3.11"
 PREPARE_DATASET_SCRIPT="${PYTHON} padd_muscima.py"
 TRAIN_SCRIPT="${PYTHON} main.py"
 TRAIN_SCRIPT_WITH_ARGS="${TRAIN_SCRIPT} ${TRAIN_ARGS}"
