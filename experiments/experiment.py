@@ -437,14 +437,14 @@ class Experiment:
     def run(self) -> None:
         """ Runs experiment """
         def draw(i, _) -> None:
+            self.visualizer(
+                tf.constant(os.path.join(self.directory, _IMAGE_DIR, f"e{i+1}{'' if self.category is None else f'c{self.category}'}")),
+                self.network,
+            )
             if self.q and i+1 != self.epochs:
                 return
             self.network.save_all(
                 os.path.join(self.directory, _MODEL_DIR, f"e{i+1}{'' if self.category is None else f'c{self.category}'}")
-            )
-            self.visualizer(
-                tf.constant(os.path.join(self.directory, _IMAGE_DIR, f"e{i+1}{'' if self.category is None else f'c{self.category}'}")),
-                self.network,
             )
 
         train_len = len(self.dataset.X_train)
