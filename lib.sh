@@ -150,7 +150,7 @@ function generate_latent {
 # Experiments #################################################################
 function train_MUSCIMA {
   local SEED=$1
-  train_other "$SEED" "$(PREPARED_MUSCIMA_DATASET "$SEED")" "$(EXPERIMENT_MODEL_DIR "$SEED" REBELO)" "$FINAL_LATENT"
+  train_other "$SEED" "$(PREPARED_MUSCIMA_DATASET "$SEED")" "$(EXPERIMENT_MODEL_DIR "$SEED" MUSCIMA)" "$FINAL_LATENT"
 }
 function train_REBELO {
   local SEED=$1
