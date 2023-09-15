@@ -30,7 +30,7 @@ N_OF_SYMBOLS_IN_MUSCIMA_PP: dict[str, int] = {
 
 @tf.function
 def rebelo_one_step(input_filename: str, img_filename: str, center_filename: str) -> None:
-    out = tf.io.decode_png(tf.io.read_file(input_filename), channels=1)
+    out = 255 - tf.io.decode_png(tf.io.read_file(input_filename), channels=1)
     bb = bounding_box(out, half=255//2)
     im = out[bb[0]:bb[2], bb[1]:bb[3]]
     image = tf.image.encode_png(tf.cast(im, tf.uint8))
